@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 namespace Sorting {
     public delegate void Shuffler(IList list, int low, int high);
@@ -23,10 +22,8 @@ namespace Sorting {
 
     public static class Permuters {
         public static void RandomShuffle(IList list, int low, int high) {
-            Random rand = RngHolder.GetRng();
-
             for (int index = low + 2; index < high; ++index) {
-                int randomIndex = rand.Next(low, index);
+                int randomIndex = SortingUtils.RandomInt(low, index);
 
                 if (randomIndex != index) {
                     SortingUtils.Swap(list, index, randomIndex);
@@ -35,10 +32,8 @@ namespace Sorting {
         }
 
         public static void SwapTwo(IList list, int low, int high) {
-            Random rand = RngHolder.GetRng();
-
-            int randomIndex1 = rand.Next(low, high);
-            int randomIndex2 = rand.Next(low, high);
+            int randomIndex1 = SortingUtils.RandomInt(low, high);
+            int randomIndex2 = SortingUtils.RandomInt(low, high);
 
             if (randomIndex1 != randomIndex2) {
                 SortingUtils.Swap(list, randomIndex1, randomIndex2);

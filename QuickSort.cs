@@ -109,7 +109,7 @@ namespace Sorting {
         }
 
         public static int Random(IList list, int low, int high, IComparer comparer) {
-            return RngHolder.GetRng().Next(low, high + 1);
+            return SortingUtils.RandomInt(low, high + 1);
         }
 
         public static int MedianOfThree(IList list, int low, int high, IComparer comparer) {

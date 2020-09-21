@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 namespace Sorting {
     internal static class SortingUtils {
+        private static readonly Random rand = new Random();
+
         public static void Swap(IList list, int i, int j) {
             object temp = list[i];
             list[i] = list[j];
@@ -59,6 +62,10 @@ namespace Sorting {
                 ++low;
                 --high;
             }
+        }
+
+        public static int RandomInt(int low, int high) {
+            return SortingUtils.rand.Next(low, high);
         }
     }
 }
