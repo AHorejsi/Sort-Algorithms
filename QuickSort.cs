@@ -29,16 +29,22 @@ namespace Sorting {
     }
 
     public class QuickSorter : ComparisonSorter {
-        private readonly PartitionInfo partitionInfo;
-        private readonly QuickSortAlgorithm algorithm;
+        public PartitionInfo PartitionInfo {
+            get;
+            private set;
+        }
+        public QuickSortAlgorithm Algorithm {
+            get;
+            private set;
+        }
 
         internal QuickSorter(PartitionInfo partitionInfo, QuickSortAlgorithm algorithm) {
-            this.partitionInfo = partitionInfo;
-            this.algorithm = algorithm;
+            this.PartitionInfo = partitionInfo;
+            this.Algorithm = algorithm;
         }
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
-            this.algorithm(list, low, high, comparer, this.partitionInfo);
+            this.Algorithm(list, low, high, comparer, this.PartitionInfo);
         }
     }
 
