@@ -33,7 +33,7 @@ namespace Sorting {
 
                 if (index != indexOfLargest) {
                     SortingUtils.Swap(list, index, indexOfLargest);
-                    Heapifiers.Recursive(list, indexOfLargest, size, comparer);
+                    index = indexOfLargest;
                 }
                 else {
                     break;

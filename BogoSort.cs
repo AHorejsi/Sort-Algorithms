@@ -14,8 +14,10 @@ namespace Sorting {
         }
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
-            while (!SortingUtils.IsSorted(list, low, high, comparer)) {
-                this.Shuffler(list, low, high);
+            if (high - low > 1) {
+                while (!SortingUtils.IsSorted(list, low, high, comparer)) {
+                    this.Shuffler(list, low, high);
+                }
             }
         }
     }

@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Sorting {
     internal static class SortingUtils {
-        private static readonly Random rand = new Random();
+        private static readonly Random Rand = new Random();
 
         public static void Swap(IList list, int i, int j) {
             object temp = list[i];
@@ -65,7 +65,7 @@ namespace Sorting {
         }
 
         public static int RandomInt(int low, int high) {
-            return SortingUtils.rand.Next(low, high);
+            return SortingUtils.Rand.Next(low, high);
         }
     }
 }
