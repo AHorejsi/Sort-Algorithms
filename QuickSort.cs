@@ -1,138 +1,121 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public delegate int PivotSelector(IList list, int low, int high, IComparer comparer);
-    public delegate int[] PartitionScheme(IList list, int low, int high, IComparer comparer, PivotSelector pivotSelector);
-    public delegate int PartitionPointDistance(int partitionPoint);
-    public delegate void QuickSortAlgorithm(IList list, int low, int high, IComparer comparer, PartitionInfo partitionDetails);
-
-
-    public class PartitionInfo {
-        public PivotSelector PivotSelector { get; }
-        public PartitionScheme PartitionScheme { get; }
-        public PartitionPointDistance Left { get; }
-        public PartitionPointDistance Right { get; }
-
-        internal PartitionInfo(
-            PivotSelector pivotSelector,
-            PartitionScheme partitionScheme,
-            PartitionPointDistance left,
-            PartitionPointDistance right
-        ) {
-            this.PivotSelector = pivotSelector;
-            this.PartitionScheme = partitionScheme;
-            this.Left = left;
-            this.Right = right;
-        }
-    }
-
     public class QuickSorter : ComparisonSorter {
-        public PartitionInfo PartitionInfo {
-            get;
-            private set;
-        }
-        public QuickSortAlgorithm Algorithm {
-            get;
-            private set;
-        }
+        private readonly QuickSortAlgorithm algorithm;
 
-        internal QuickSorter(PartitionInfo partitionInfo, QuickSortAlgorithm algorithm) {
-            this.PartitionInfo = partitionInfo;
-            this.Algorithm = algorithm;
+        internal QuickSorter(QuickSortAlgorithm algorithm) {
+            this.algorithm = algorithm;
         }
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
-            this.Algorithm(list, low, high, comparer, this.PartitionInfo);
+            this.algorithm.Sort(list, low, high, comparer);
         }
     }
 
+    public enum PivotSelectorType { FIRST, MIDDLE, LAST, RANDOM, MEDIAN_OF_THREE }
+    public enum PartitionSchemeType { LOMUTO, HOARE, STABLE, THREE_WAY }
+    public enum QuickSortAlgorithmType { RECURSIVE, ASYNC_RECURSIVE, ITERATIVE }
+
     public class QuickSorterBuilder {
-        private PivotSelector pivotSelector = PivotSelectors.MedianOfThree;
-        private PartitionScheme partitionScheme = PartitionSchemes.Hoare;
-        private PartitionPointDistance left = PartitionPointDistances.At;
-        private PartitionPointDistance right = PartitionPointDistances.RightOne;
-        private QuickSortAlgorithm algorithm = QuickSortAlgorithms.Recursive;
+        private PivotSelectorType pivotSelectorType = PivotSelectorType.MEDIAN_OF_THREE;
+        private PartitionSchemeType partitionSchemeType = PartitionSchemeType.HOARE;
+        private QuickSortAlgorithmType algorithmType = QuickSortAlgorithmType.RECURSIVE;
 
-        public QuickSorterBuilder() {
-        }
-
-        public QuickSorterBuilder WithPivotSelector(PivotSelector pivotSelector) {
-            this.pivotSelector = pivotSelector;
+        public QuickSorterBuilder WithPivotSelectorType(PivotSelectorType pivotSelectorType) {
+            this.pivotSelectorType = pivotSelectorType;
 
             return this;
         }
 
-        public QuickSorterBuilder WithPartitionScheme(PartitionScheme partitionScheme) {
-            this.partitionScheme = partitionScheme;
+        public QuickSorterBuilder WithPartitionSchemeType(PartitionSchemeType partitionSchemeType) {
+            this.partitionSchemeType = partitionSchemeType;
 
             return this;
         }
 
-        public QuickSorterBuilder WithLeft(PartitionPointDistance left) {
-            this.left = left;
-
-            return this;
-        }
-
-        public QuickSorterBuilder WithRight(PartitionPointDistance right) {
-            this.right = right;
-
-            return this;
-        }
-
-        public QuickSorterBuilder WithAlgorithm(QuickSortAlgorithm algorithm) {
-            this.algorithm = algorithm;
+        public QuickSorterBuilder WithAlgorithmType(QuickSortAlgorithmType algorithmType) {
+            this.algorithmType = algorithmType;
 
             return this;
         }
 
         public QuickSorter Build() {
-            PartitionInfo partitionInfo = new PartitionInfo(this.pivotSelector, this.partitionScheme, this.left, this.right);
+            QuickSortAlgorithm algorithm = this.MakeAlgorithm();
 
-            return new QuickSorter(partitionInfo, this.algorithm);
+            return new QuickSorter(algorithm);
+        }
+
+        private QuickSortAlgorithm MakeAlgorithm() {
+            PartitionScheme partitionScheme = this.MakePartitionScheme();
+
+            return this.algorithmType switch {
+                QuickSortAlgorithmType.RECURSIVE => new RecursiveQuickSortAlgorithm(partitionScheme),
+                QuickSortAlgorithmType.ASYNC_RECURSIVE => new AsyncRecursiveQuickSortAlgorithm(partitionScheme),
+                QuickSortAlgorithmType.ITERATIVE => new IterativeQuickSortAlgorithm(partitionScheme),
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        private PartitionScheme MakePartitionScheme() {
+            PivotSelector pivotSelector = this.MakePivotSelector();
+            Tuple<PartitionPointDistance, PartitionPointDistance> partitionPointDistances = this.MakePartitionPointDistances();
+
+            return this.partitionSchemeType switch {
+                PartitionSchemeType.LOMUTO => new LomutoPartitionScheme(pivotSelector, partitionPointDistances.Item1, partitionPointDistances.Item2),
+                PartitionSchemeType.HOARE => new HoarePartitionScheme(pivotSelector, partitionPointDistances.Item1, partitionPointDistances.Item2),
+                PartitionSchemeType.STABLE => new StablePartitionScheme(pivotSelector, partitionPointDistances.Item1, partitionPointDistances.Item2),
+                PartitionSchemeType.THREE_WAY => new ThreeWayPartitionScheme(pivotSelector, partitionPointDistances.Item1, partitionPointDistances.Item2),
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        private PivotSelector MakePivotSelector() {
+            return this.pivotSelectorType switch {
+                PivotSelectorType.FIRST => PivotSelectors.First,
+                PivotSelectorType.MIDDLE => PivotSelectors.Middle,
+                PivotSelectorType.LAST => PivotSelectors.Last,
+                PivotSelectorType.RANDOM => PivotSelectors.Random,
+                PivotSelectorType.MEDIAN_OF_THREE => PivotSelectors.MedianOfThree,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private Tuple<PartitionPointDistance, PartitionPointDistance> MakePartitionPointDistances() {
+            return this.partitionSchemeType switch {
+                PartitionSchemeType.LOMUTO => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.LeftOne, PartitionPointDistances.RightOne),
+                PartitionSchemeType.HOARE => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.At, PartitionPointDistances.RightOne),
+                PartitionSchemeType.STABLE => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.LeftOne, PartitionPointDistances.RightOne),
+                PartitionSchemeType.THREE_WAY => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.At, PartitionPointDistances.At),
+                _ => throw new NotImplementedException()
+            };
         }
     }
 
-    public static class PivotSelectors {
-        public static int First(IList list, int low, int high, IComparer comparer) {
-            return low;
+    internal abstract class PartitionScheme {
+        internal readonly PivotSelector pivotSelector;
+        internal readonly PartitionPointDistance left;
+        internal readonly PartitionPointDistance right;
+
+        internal PartitionScheme(PivotSelector pivotSelector, PartitionPointDistance left, PartitionPointDistance right) {
+            this.pivotSelector = pivotSelector;
+            this.left = left;
+            this.right = right;
         }
 
-        public static int Middle(IList list, int low, int high, IComparer comparer) {
-            return low + (high + 1 - low) / 2;
-        }
-
-        public static int Last(IList list, int low, int high, IComparer comparer) {
-            return high;
-        }
-
-        public static int Random(IList list, int low, int high, IComparer comparer) {
-            return SortingUtils.RandomInt(low, high + 1);
-        }
-
-        public static int MedianOfThree(IList list, int low, int high, IComparer comparer) {
-            int mid = low + (high + 1 - low) / 2;
-
-            if (comparer.Compare(list[high], list[low]) < 0) {
-                SortingUtils.Swap(list, high, low);
-            }
-            if (comparer.Compare(list[mid], list[low]) < 0) {
-                SortingUtils.Swap(list, mid, low);
-            }
-            if (comparer.Compare(list[high], list[mid]) < 0) {
-                SortingUtils.Swap(list, high, mid);
-            }
-
-            return mid;
-        }
+        internal abstract int[] Partition(IList list, int low, int high, IComparer comparer);
     }
 
-    public static class PartitionSchemes {
-        public static int[] Lomuto(IList list, int low, int high, IComparer comparer, PivotSelector pivotSelector) {
-            int pivotIndex = pivotSelector(list, low, high, comparer);
-            SortingUtils.Swap(list, pivotIndex, high);
+    internal class LomutoPartitionScheme : PartitionScheme {
+        internal LomutoPartitionScheme(PivotSelector pivotSelector, PartitionPointDistance left, PartitionPointDistance right) : base(pivotSelector, left, right) {
+        }
+
+        internal override int[] Partition(IList list, int low, int high, IComparer comparer) {
+            int pivotIndex = base.pivotSelector(list, low, high, comparer);
+            SortUtils.Swap(list, pivotIndex, high);
 
             object pivot = list[high];
             int i = low - 1;
@@ -140,19 +123,24 @@ namespace Sorting {
             for (int j = low; j < high; ++j) {
                 if (comparer.Compare(list[j], pivot) <= 0) {
                     ++i;
-                    SortingUtils.Swap(list, i, j);
+                    SortUtils.Swap(list, i, j);
                 }
             }
 
             int swapIndex = i + 1;
-            SortingUtils.Swap(list, swapIndex, high);
+            SortUtils.Swap(list, swapIndex, high);
 
             return new int[] { swapIndex };
         }
+    }
 
-        public static int[] Hoare(IList list, int low, int high, IComparer comparer, PivotSelector pivotSelector) {
-            int pivotIndex = pivotSelector(list, low, high, comparer);
-            SortingUtils.Swap(list, pivotIndex, low);
+    internal class HoarePartitionScheme : PartitionScheme {
+        internal HoarePartitionScheme(PivotSelector pivotSelector, PartitionPointDistance left, PartitionPointDistance right) : base(pivotSelector, left, right) { 
+        }
+
+        internal override int[] Partition(IList list, int low, int high, IComparer comparer) {
+            int pivotIndex = base.pivotSelector(list, low, high, comparer);
+            SortUtils.Swap(list, pivotIndex, low);
 
             object pivot = list[low];
             int i = low - 1;
@@ -171,15 +159,20 @@ namespace Sorting {
                     return new int[] { j };
                 }
 
-                SortingUtils.Swap(list, i, j);
+                SortUtils.Swap(list, i, j);
             }
         }
+    }
 
-        public static int[] Stable(IList list, int low, int high, IComparer comparer, PivotSelector pivotSelector) {
+    internal class StablePartitionScheme : PartitionScheme {
+        internal StablePartitionScheme(PivotSelector pivotSelector, PartitionPointDistance left, PartitionPointDistance right) : base(pivotSelector, left, right) {
+        }
+
+        internal override int[] Partition(IList list, int low, int high, IComparer comparer) {
             int mid = low + (high + 1 - low) / 2;
 
-            int pivotIndex = pivotSelector(list, low, high, comparer);
-            SortingUtils.Swap(list, pivotIndex, mid);
+            int pivotIndex = base.pivotSelector(list, low, high, comparer);
+            SortUtils.Swap(list, pivotIndex, mid);
 
             ArrayList lesser = new ArrayList(list.Count);
             ArrayList greater = new ArrayList(list.Count);
@@ -224,22 +217,27 @@ namespace Sorting {
 
             return new int[] { partitionPoint };
         }
+    }
 
-        public static int[] ThreeWay(IList list, int low, int high, IComparer comparer, PivotSelector pivotSelector) {
+    internal class ThreeWayPartitionScheme : PartitionScheme {
+        internal ThreeWayPartitionScheme(PivotSelector pivotSelector, PartitionPointDistance left, PartitionPointDistance right) : base(pivotSelector, left, right) {
+        }
+
+        internal override int[] Partition(IList list, int low, int high, IComparer comparer) {
             int leftPartitionPoint;
             int rightPartitionPoint;
 
             if (high - low <= 1) {
                 if (comparer.Compare(list[low], list[high]) > 0) {
-                    SortingUtils.Swap(list, low, high);
+                    SortUtils.Swap(list, low, high);
                 }
 
                 leftPartitionPoint = low;
                 rightPartitionPoint = high;
             }
             else {
-                int pivotIndex = pivotSelector(list, low, high, comparer);
-                SortingUtils.Swap(list, pivotIndex, high);
+                int pivotIndex = base.pivotSelector(list, low, high, comparer);
+                SortUtils.Swap(list, pivotIndex, high);
 
                 int mid = low;
                 object pivot = list[high];
@@ -248,13 +246,13 @@ namespace Sorting {
                     int comparison = comparer.Compare(list[mid], pivot);
 
                     if (comparison < 0) {
-                        SortingUtils.Swap(list, low, mid);
+                        SortUtils.Swap(list, low, mid);
 
                         ++low;
                         ++mid;
                     }
                     else if (comparison > 0) {
-                        SortingUtils.Swap(list, mid, high);
+                        SortUtils.Swap(list, mid, high);
 
                         --high;
                     }
@@ -271,41 +269,75 @@ namespace Sorting {
         }
     }
 
-    public static class PartitionPointDistances {
-        public static int At(int partitionPoint) {
-            return partitionPoint;
+    internal abstract class QuickSortAlgorithm {
+        protected readonly PartitionScheme partitionScheme;
+
+        internal QuickSortAlgorithm(PartitionScheme partitionScheme) {
+            this.partitionScheme = partitionScheme;
         }
 
-        public static int RightOne(int partitionPoint) {
-            return partitionPoint + 1;
-        }
-
-        public static int LeftOne(int partitionPoint) {
-            return partitionPoint - 1;
-        }
+        internal abstract void Sort(IList list, int low, int high, IComparer comparer);
     }
 
-    public static class QuickSortAlgorithms {
-        public static void Recursive(IList list, int low, int high, IComparer comparer, PartitionInfo partitionInfo) {
-            QuickSortAlgorithms.DoRecursive(list, low, high - 1, comparer, partitionInfo);
+    internal class RecursiveQuickSortAlgorithm : QuickSortAlgorithm {
+        internal RecursiveQuickSortAlgorithm(PartitionScheme partitionScheme) : base(partitionScheme) {
         }
 
-        private static void DoRecursive(IList list, int low, int high, IComparer comparer, PartitionInfo partitionInfo) {
+        internal override void Sort(IList list, int low, int high, IComparer comparer) {
+            this.DoSort(list, low, high - 1, comparer);
+        }
+
+        private void DoSort(IList list, int low, int high, IComparer comparer) {
             if (low < high) {
-                int[] partitionPoint = partitionInfo.PartitionScheme(list, low, high, comparer, partitionInfo.PivotSelector);
+                int[] partitionPoint = base.partitionScheme.Partition(list, low, high, comparer);
 
                 if (2 == partitionPoint.Length) {
-                    QuickSortAlgorithms.DoRecursive(list, low, partitionInfo.Left(partitionPoint[0]), comparer, partitionInfo);
-                    QuickSortAlgorithms.DoRecursive(list, partitionInfo.Right(partitionPoint[1]), high, comparer, partitionInfo);
+                    this.DoSort(list, low, base.partitionScheme.left(partitionPoint[0]), comparer);
+                    this.DoSort(list, base.partitionScheme.right(partitionPoint[1]), high, comparer);
                 }
                 else {
-                    QuickSortAlgorithms.DoRecursive(list, low, partitionInfo.Left(partitionPoint[0]), comparer, partitionInfo);
-                    QuickSortAlgorithms.DoRecursive(list, partitionInfo.Right(partitionPoint[0]), high, comparer, partitionInfo);
+                    this.DoSort(list, low, base.partitionScheme.left(partitionPoint[0]), comparer);
+                    this.DoSort(list, base.partitionScheme.right(partitionPoint[0]), high, comparer);
                 }
             }
         }
+    }
 
-        public static void Iterative(IList list, int low, int high, IComparer comparer, PartitionInfo partitionInfo) {
+    internal class AsyncRecursiveQuickSortAlgorithm : QuickSortAlgorithm {
+        internal AsyncRecursiveQuickSortAlgorithm(PartitionScheme partitionScheme) : base(partitionScheme) {
+        }
+
+        internal override void Sort(IList list, int low, int high, IComparer comparer) {
+            this.DoSort(list, low, high - 1, comparer);
+        }
+
+        private void DoSort(IList list, int low, int high, IComparer comparer) {
+            if (low < high) {
+                int[] partitionPoint = base.partitionScheme.Partition(list, low, high, comparer);
+
+                if (2 == partitionPoint.Length) {
+                    Parallel.Invoke(
+                        SortUtils.ParallelOptions,
+                        () => { this.DoSort(list, low, base.partitionScheme.left(partitionPoint[0]), comparer); },
+                        () => { this.DoSort(list, base.partitionScheme.right(partitionPoint[1]), high, comparer); }
+                    );
+                }
+                else {
+                    Parallel.Invoke(
+                        SortUtils.ParallelOptions,
+                        () => { this.DoSort(list, low, base.partitionScheme.left(partitionPoint[0]), comparer); },
+                        () => { this.DoSort(list, base.partitionScheme.right(partitionPoint[0]), high, comparer); }
+                    );
+                }
+            }
+        }
+    }
+
+    internal class IterativeQuickSortAlgorithm : QuickSortAlgorithm {
+        internal IterativeQuickSortAlgorithm(PartitionScheme partitionScheme) : base(partitionScheme) {
+        }
+
+        internal override void Sort(IList list, int low, int high, IComparer comparer) {
             --high;
 
             Stack<int> recursionStack = new Stack<int>(high - low);
@@ -316,17 +348,17 @@ namespace Sorting {
                 high = recursionStack.Pop();
                 low = recursionStack.Pop();
 
-                int[] partitionPoint = partitionInfo.PartitionScheme(list, low, high, comparer, partitionInfo.PivotSelector);
+                int[] partitionPoint = base.partitionScheme.Partition(list, low, high, comparer);
                 int leftPartitionPoint;
                 int rightPartitionPoint;
 
                 if (2 == partitionPoint.Length) {
-                    leftPartitionPoint = partitionInfo.Left(partitionPoint[0]);
-                    rightPartitionPoint = partitionInfo.Right(partitionPoint[1]);
+                    leftPartitionPoint = base.partitionScheme.left(partitionPoint[0]);
+                    rightPartitionPoint = base.partitionScheme.right(partitionPoint[1]);
                 }
                 else {
-                    leftPartitionPoint = partitionInfo.Left(partitionPoint[0]);
-                    rightPartitionPoint = partitionInfo.Right(partitionPoint[0]);
+                    leftPartitionPoint = base.partitionScheme.left(partitionPoint[0]);
+                    rightPartitionPoint = base.partitionScheme.right(partitionPoint[0]);
                 }
 
                 if (leftPartitionPoint > low) {
@@ -340,28 +372,57 @@ namespace Sorting {
                 }
             }
         }
+    }
 
-        public static void AsyncRecursive(IList list, int low, int high, IComparer comparer, PartitionInfo partitionInfo) {
-            QuickSortAlgorithms.DoAsyncRecursive(list, low, high - 1, comparer, partitionInfo);
+    internal delegate int PivotSelector(IList list, int low, int high, IComparer comparer);
+
+    internal static class PivotSelectors {
+        internal static int First(IList list, int low, int high, IComparer comparer) {
+            return low;
         }
 
-        private static void DoAsyncRecursive(IList list, int low, int high, IComparer comparer, PartitionInfo partitionInfo) {
-            if (low < high) {
-                int[] partitionPoint = partitionInfo.PartitionScheme(list, low, high, comparer, partitionInfo.PivotSelector);
+        internal static int Middle(IList list, int low, int high, IComparer comparer) {
+            return low + (high + 1 - low) / 2;
+        }
 
-                if (2 == partitionPoint.Length) {
-                    Parallel.Invoke(
-                        () => { QuickSortAlgorithms.DoAsyncRecursive(list, low, partitionInfo.Left(partitionPoint[0]), comparer, partitionInfo); },
-                        () => { QuickSortAlgorithms.DoAsyncRecursive(list, partitionInfo.Right(partitionPoint[1]), high, comparer, partitionInfo); }
-                    );
-                }
-                else {
-                    Parallel.Invoke(
-                        () => { QuickSortAlgorithms.DoAsyncRecursive(list, low, partitionInfo.Left(partitionPoint[0]), comparer, partitionInfo); },
-                        () => { QuickSortAlgorithms.DoAsyncRecursive(list, partitionInfo.Right(partitionPoint[0]), high, comparer, partitionInfo); }
-                    );
-                }
+        internal static int Last(IList list, int low, int high, IComparer comparer) {
+            return high;
+        }
+
+        internal static int Random(IList list, int low, int high, IComparer comparer) {
+            return SortUtils.RandomInt(low, high + 1);
+        }
+
+        internal static int MedianOfThree(IList list, int low, int high, IComparer comparer) {
+            int mid = low + (high + 1 - low) / 2;
+
+            if (comparer.Compare(list[high], list[low]) < 0) {
+                SortUtils.Swap(list, high, low);
             }
+            if (comparer.Compare(list[mid], list[low]) < 0) {
+                SortUtils.Swap(list, mid, low);
+            }
+            if (comparer.Compare(list[high], list[mid]) < 0) {
+                SortUtils.Swap(list, high, mid);
+            }
+
+            return mid;
+        }
+    }
+
+    internal delegate int PartitionPointDistance(int partitionPoint);
+
+    internal static class PartitionPointDistances {
+        internal static int At(int partitionPoint) {
+            return partitionPoint;
+        }
+
+        internal static int RightOne(int partitionPoint) {
+            return partitionPoint + 1;
+        }
+
+        internal static int LeftOne(int partitionPoint) {
+            return partitionPoint - 1;
         }
     }
 }
