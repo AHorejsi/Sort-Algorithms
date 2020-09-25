@@ -22,7 +22,7 @@ namespace Sorting {
         }
     }
 
-    public static class Permuters {
+    public static class Shufflers {
         public static void RandomShuffle(IList list, int low, int high) {
             for (int index = low + 2; index < high; ++index) {
                 int randomIndex = SortUtils.RandomInt(low, index);
