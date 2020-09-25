@@ -20,7 +20,7 @@ namespace Sorting {
             }
 
             for (int index = list.Count - 1; index > 0; --index) {
-                SortingUtils.Swap(list, 0, index);
+                SortUtils.Swap(list, 0, index);
                 this.Heapifier(list, 0, index, comparer);
             }
         }
@@ -32,7 +32,7 @@ namespace Sorting {
                 int indexOfLargest = Heapifiers.GetIndexOfLargest(list, index, size, comparer);
 
                 if (index != indexOfLargest) {
-                    SortingUtils.Swap(list, index, indexOfLargest);
+                    SortUtils.Swap(list, index, indexOfLargest);
                     index = indexOfLargest;
                 }
                 else {
@@ -45,7 +45,7 @@ namespace Sorting {
             int indexOfLargest = Heapifiers.GetIndexOfLargest(list, index, size, comparer);
 
             if (index != indexOfLargest) {
-                SortingUtils.Swap(list, index, indexOfLargest);
+                SortUtils.Swap(list, index, indexOfLargest);
                 Heapifiers.Recursive(list, indexOfLargest, size, comparer);
             }
         }

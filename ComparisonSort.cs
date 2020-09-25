@@ -4,9 +4,6 @@ using System.Collections.Generic;
 
 namespace Sorting {
     public abstract class ComparisonSorter {
-        protected ComparisonSorter() {
-        }
-
         public virtual void Sort(IList list) {
             this.Sort(list, Comparer.Default);
         }

@@ -11,7 +11,7 @@ namespace Sorting {
 
                     while (index3 < high) {
                         if (comparer.Compare(list[index2], list[index3]) > 0) {
-                            SortingUtils.Swap(list, index2, index3);
+                            SortUtils.Swap(list, index2, index3);
                             swapped = true;
                         }
 

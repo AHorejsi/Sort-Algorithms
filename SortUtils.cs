@@ -1,9 +1,20 @@
 ﻿using System;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace Sorting {
-    internal static class SortingUtils {
+    internal static class SortUtils {
         private static readonly Random Rand = new Random();
+        public static readonly ParallelOptions ParallelOptions = new ParallelOptions();
+
+        static SortUtils() {
+            SortUtils.ParallelOptions.TaskScheduler = null;
+            SortUtils.ParallelOptions.MaxDegreeOfParallelism = -1;
+        }
+
+        public static int RandomInt(int low, int high) {
+            return SortUtils.Rand.Next(low, high);
+        }
 
         public static void Swap(IList list, int i, int j) {
             object temp = list[i];
@@ -37,35 +48,15 @@ namespace Sorting {
             return minIndex;
         }
 
-        public static int MaxIndex(IList list, int low, int high, IComparer comparer) {
-            object maxElement = list[low];
-            int maxIndex = low;
-
-            for (int index = low + 1; index < high; ++index) {
-                object current = list[index];
-
-                if (comparer.Compare(current, maxElement) > 0) {
-                    maxElement = current;
-                    maxIndex = index;
-                }
-            }
-
-            return maxIndex;
-        }
-
         public static void Reverse(IList list, int low, int high) {
             --high;
 
             while (low < high) {
-                SortingUtils.Swap(list, low, high);
+                SortUtils.Swap(list, low, high);
 
                 ++low;
                 --high;
             }
-        }
-
-        public static int RandomInt(int low, int high) {
-            return SortingUtils.Rand.Next(low, high);
         }
     }
 }
