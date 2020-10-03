@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class QuickSorter : CompareSorter, IEquatable<QuickSorter> {
+    public class QuickSorter : CompareSorter {
         private readonly QuickSortAlgorithm algorithm;
 
         internal QuickSorter(QuickSortAlgorithm algorithm) {
@@ -13,23 +13,6 @@ namespace Sorting {
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm.Sort(list, low, high, comparer);
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as QuickSorter);
-        }
-
-        public bool Equals(QuickSorter sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.algorithm.Equals(sorter.algorithm);
-            }
-        }
-
-        public override int GetHashCode() {
-            return this.algorithm.GetHashCode();
         }
     }
 
@@ -112,7 +95,7 @@ namespace Sorting {
         }
     }
 
-    internal abstract class QuickSortAlgorithm : IEquatable<QuickSortAlgorithm> {
+    internal abstract class QuickSortAlgorithm {
         protected readonly PartitionScheme partitionScheme;
 
         internal QuickSortAlgorithm(PartitionScheme partitionScheme) {
@@ -120,10 +103,6 @@ namespace Sorting {
         }
 
         internal abstract void Sort(IList list, int low, int high, IComparer comparer);
-
-        public bool Equals(QuickSortAlgorithm algorithm) {
-            return this.partitionScheme.Equals(algorithm.partitionScheme) && this.GetType().Equals(algorithm.GetType());
-        }
     }
 
     internal class RecursiveQuickSortAlgorithm : QuickSortAlgorithm {
@@ -223,7 +202,7 @@ namespace Sorting {
         }
     }
 
-    internal abstract class PartitionScheme : IEquatable<PartitionScheme> {
+    internal abstract class PartitionScheme {
         internal readonly PivotSelector pivotSelector;
         internal readonly PartitionPointDistance left;
         internal readonly PartitionPointDistance right;
@@ -235,10 +214,6 @@ namespace Sorting {
         }
 
         internal abstract int[] Partition(IList list, int low, int high, IComparer comparer);
-
-        public bool Equals(PartitionScheme partitionScheme) {
-            return this.pivotSelector == partitionScheme.pivotSelector && this.GetType().Equals(partitionScheme.GetType());
-        }
     }
 
     internal class LomutoPartitionScheme : PartitionScheme {

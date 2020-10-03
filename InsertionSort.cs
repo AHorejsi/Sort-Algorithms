@@ -4,7 +4,7 @@ using System.Collections;
 namespace Sorting {
     internal delegate int Searcher(IList list, int low, int index, IComparer comparer);
 
-    public class InsertionSorter : CompareSorter, IEquatable<InsertionSorter> {
+    public class InsertionSorter : CompareSorter {
         private readonly Searcher searcher;
 
         internal InsertionSorter(Searcher searcher) {
@@ -20,37 +20,6 @@ namespace Sorting {
                         SortUtils.Swap(list, j, j - 1);
                     }
                 }
-            }
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as InsertionSorter);
-        }
-
-        public bool Equals(InsertionSorter sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.searcher == sorter.searcher; 
-            }
-        }
-
-        public override int GetHashCode() {
-            if (this.searcher == Searchers.Linear) {
-                return 0;
-            }
-            else if (this.searcher == Searchers.Binary) {
-                return 1;
-            }
-            else if (this.searcher == Searchers.Exponential) {
-                return 2;
-            }
-            else if (this.searcher == Searchers.Jump) {
-                return 3;
-            }
-            else {
-                return 4;
             }
         }
     }

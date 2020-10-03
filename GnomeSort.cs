@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class GnomeSorter : CompareSorter, IEquatable<GnomeSorter> {
+    public class GnomeSorter : CompareSorter {
         private static GnomeSorter SINGLETON = null;
 
         private GnomeSorter() {
@@ -34,18 +34,6 @@ namespace Sorting {
                     --index;
                 }
             }
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as GnomeSorter);
-        }
-
-        public bool Equals(GnomeSorter sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            return base.GetHashCode();
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Collections;
 namespace Sorting {
     public delegate void Shuffler(IList list, int low, int high);
 
-    public class BogoSorter : CompareSorter, IEquatable<BogoSorter> {
+    public class BogoSorter : CompareSorter {
         private readonly Shuffler shuffler;
 
         internal BogoSorter(Shuffler shuffler) {
@@ -16,28 +16,6 @@ namespace Sorting {
                 while (!SortUtils.IsSorted(list, low, high, comparer)) {
                     this.shuffler(list, low, high);
                 }
-            }
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as BogoSorter);
-        }
-
-        public bool Equals(BogoSorter sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.shuffler == sorter.shuffler;
-            }
-        }
-
-        public override int GetHashCode() {
-            if (this.shuffler == Shufflers.RandomShuffle) {
-                return 0;
-            }
-            else {
-                return 1;
             }
         }
     }

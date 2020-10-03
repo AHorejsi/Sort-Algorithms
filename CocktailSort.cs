@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class CocktailSorter : CompareSorter, IEquatable<CocktailSorter> {
+    public class CocktailSorter : CompareSorter {
         private static CocktailSorter SINGLETON = null;
 
         private CocktailSorter() {

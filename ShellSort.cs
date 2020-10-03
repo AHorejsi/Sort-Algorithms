@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class ShellSorter : CompareSorter, IEquatable<ShellSorter> {
+    public class ShellSorter : CompareSorter {
         private static ShellSorter SINGLETON = null;
 
         private ShellSorter() {
@@ -33,18 +33,6 @@ namespace Sorting {
                     list[j] = temp;
                 }
             }
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as ShellSorter);
-        }
-
-        public bool Equals(ShellSorter sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            return base.GetHashCode();
         }
     }
 }

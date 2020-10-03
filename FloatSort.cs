@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 
 namespace Sorting {
-    public abstract class IntegerSorter {
+    public abstract class FloatSorter {
         public void Sort(IList list) {
             this.Sort(list, 0, list.Count);
         }

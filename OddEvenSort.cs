@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class OddEvenSorter : CompareSorter, IEquatable<OddEvenSorter> {
+    public class OddEvenSorter : CompareSorter {
         private static OddEvenSorter SINGLETON = null;
 
         private OddEvenSorter() {
@@ -56,18 +56,6 @@ namespace Sorting {
             }
 
             return isSortedOnOddIndices;
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as OddEvenSorter);
-        }
-
-        public bool Equals(OddEvenSorter sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            return base.GetHashCode();
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class MergeSorter : CompareSorter, IEquatable<MergeSorter> {
+    public class MergeSorter : CompareSorter {
         private MergeSortAlgorithm algorithm;
 
         internal MergeSorter(MergeSortAlgorithm algorithm) {
@@ -12,19 +12,6 @@ namespace Sorting {
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm.Sort(list, low, high, comparer);
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as MergeSorter);
-        }
-
-        public bool Equals(MergeSorter sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.algorithm.Equals(sorter.algorithm);
-            }
         }
     }
 

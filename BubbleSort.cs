@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class BubbleSorter : CompareSorter, IEquatable<BubbleSorter> {
+    public class BubbleSorter : CompareSorter {
         private static BubbleSorter SINGLETON = null;
 
         private BubbleSorter() {
@@ -38,18 +38,6 @@ namespace Sorting {
                     return;
                 }
             }
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as BubbleSorter);
-        }
-
-        public bool Equals(BubbleSorter sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            return base.GetHashCode();
         }
     }
 }

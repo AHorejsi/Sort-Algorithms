@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Sorting {
-    public class CountingSorter : IntegerSorter, IEquatable<CountingSorter> {
+    public class CountingSorter : IntegerSorter {
         private static CountingSorter SINGLETON = null;
 
         private CountingSorter() {
@@ -90,18 +90,6 @@ namespace Sorting {
                 list[index] = val;
                 ++index;
             }
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as CountingSorter);
-        }
-
-        public bool Equals(CountingSorter sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            return base.GetHashCode();
         }
     }
 }

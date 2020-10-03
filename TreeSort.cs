@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Sorting {
-    public class TreeSorter : CompareSorter, IEquatable<TreeSorter> {
+    public class TreeSorter : CompareSorter {
         private readonly ISortingTree tree;
 
         internal TreeSorter(ISortingTree tree) {
@@ -17,23 +17,6 @@ namespace Sorting {
 
             this.tree.Traverse(list, low);
             this.tree.Empty();
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as TreeSorter);
-        }
-
-        public bool Equals(TreeSorter sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.tree.GetType().Equals(sorter.tree.GetType());
-            }
-        }
-
-        public override int GetHashCode() {
-            return this.tree.GetType().GetHashCode();
         }
     }
 

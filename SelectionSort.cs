@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class SelectionSorter : CompareSorter, IEquatable<SelectionSorter> {
+    public class SelectionSorter : CompareSorter {
         private static SelectionSorter SINGLETON = null;
 
         private SelectionSorter() {
@@ -42,18 +42,6 @@ namespace Sorting {
             }
 
             return minIndex;
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as SelectionSorter);
-        }
-
-        public bool Equals(SelectionSorter sorter) {
-            return !(sorter is null); 
-        }
-
-        public override int GetHashCode() {
-            return base.GetHashCode();
         }
     }
 }
