@@ -1,7 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 namespace Sorting {
-    public class CocktailSorter : ComparisonSorter {
+    public class CocktailSorter : CompareSorter, IEquatable<CocktailSorter> {
+        private static CocktailSorter SINGLETON = null;
+
+        private CocktailSorter() {
+        }
+
+        public static CocktailSorter Instance {
+            get {
+                if (CocktailSorter.SINGLETON is null) {
+                    CocktailSorter.SINGLETON = new CocktailSorter();
+                }
+
+                return CocktailSorter.SINGLETON;
+            }
+        }
+
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             bool swapped;
             --high;
@@ -49,6 +65,18 @@ namespace Sorting {
             }
 
             return swapped;
+        }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as CocktailSorter);
+        }
+
+        public bool Equals(CocktailSorter sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
         }
     }
 }

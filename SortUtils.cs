@@ -31,32 +31,5 @@ namespace Sorting {
 
             return true;
         }
-
-        public static int MinIndex(IList list, int low, int high, IComparer comparer) {
-            object minElement = list[low];
-            int minIndex = low;
-
-            for (int index = low + 1; index < high; ++index) {
-                object current = list[index];
-
-                if (comparer.Compare(current, minElement) < 0) {
-                    minElement = current;
-                    minIndex = index;
-                }
-            }
-
-            return minIndex;
-        }
-
-        public static void Reverse(IList list, int low, int high) {
-            --high;
-
-            while (low < high) {
-                SortUtils.Swap(list, low, high);
-
-                ++low;
-                --high;
-            }
-        }
     }
 }

@@ -2,22 +2,19 @@
 using System.Collections;
 
 namespace Sorting {
-    public delegate int Searcher(IList list, int low, int index, IComparer comparer);
+    internal delegate int Searcher(IList list, int low, int index, IComparer comparer);
 
-    public class InsertionSorter : ComparisonSorter {
-        public Searcher Searcher {
-            get;
-            private set;
-        }
+    public class InsertionSorter : CompareSorter, IEquatable<InsertionSorter> {
+        private readonly Searcher searcher;
 
-        public InsertionSorter(Searcher searcher) {
-            this.Searcher = searcher;
+        internal InsertionSorter(Searcher searcher) {
+            this.searcher = searcher;
         }
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             if (high - low > 1) {
                 for (int i = low + 1; i < high; ++i) {
-                    int sortedPosition = this.Searcher(list, low, i, comparer);
+                    int sortedPosition = this.searcher(list, low, i, comparer);
 
                     for (int j = i; j > sortedPosition; --j) {
                         SortUtils.Swap(list, j, j - 1);
@@ -25,9 +22,40 @@ namespace Sorting {
                 }
             }
         }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as InsertionSorter);
+        }
+
+        public bool Equals(InsertionSorter sorter) {
+            if (sorter is null) {
+                return false;
+            }
+            else {
+                return this.searcher == sorter.searcher; 
+            }
+        }
+
+        public override int GetHashCode() {
+            if (this.searcher == Searchers.Linear) {
+                return 0;
+            }
+            else if (this.searcher == Searchers.Binary) {
+                return 1;
+            }
+            else if (this.searcher == Searchers.Exponential) {
+                return 2;
+            }
+            else if (this.searcher == Searchers.Jump) {
+                return 3;
+            }
+            else {
+                return 4;
+            }
+        }
     }
 
-    public static class Searchers {
+    internal static class Searchers {
         public static int Linear(IList list, int low, int high, IComparer comparer) {
             int index = low;
 
@@ -98,8 +126,9 @@ namespace Sorting {
             while (comparer.Compare(list[prev], list[high]) < 0) {
                 ++prev;
 
-                if (prev == Math.Min(step, size))
-                    return prev;
+                if (prev == Math.Min(step, size)) {
+                    break;
+                }
             }
 
             return prev;
@@ -109,7 +138,7 @@ namespace Sorting {
             int[] fibonacciData = Searchers.GetFibonacciData(high);
             int offset = -1;
 
-            while (fibonacciData[2] > 1) {
+            while (fibonacciData[2] > low + 1) {
                 int index = Math.Min(offset + fibonacciData[0], high - 1);
                 int comparison = comparer.Compare(list[index], list[high]);
 
@@ -145,6 +174,23 @@ namespace Sorting {
             }
 
             return new int[] { fib0, fib1, fibN };
+        }
+    }
+
+    public enum SearchType { LINEAR, BINARY, FIBONACCI, EXPONENTIAL, JUMP }
+
+    public static class InsertionSortFactory {
+        public static InsertionSorter Make(SearchType type) {
+            Searcher searcher = type switch {
+                SearchType.LINEAR => Searchers.Linear,
+                SearchType.BINARY => Searchers.Binary,
+                SearchType.FIBONACCI => Searchers.Fibonacci,
+                SearchType.EXPONENTIAL => Searchers.Exponential,
+                SearchType.JUMP => Searchers.Jump,
+                _ => throw new NotImplementedException(),
+            };
+
+            return new InsertionSorter(searcher);
         }
     }
 }

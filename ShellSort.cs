@@ -1,7 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 namespace Sorting {
-    public class ShellSorter : ComparisonSorter {
+    public class ShellSorter : CompareSorter, IEquatable<ShellSorter> {
+        private static ShellSorter SINGLETON = null;
+
+        private ShellSorter() {
+        }
+
+        public static ShellSorter Instance {
+            get {
+                if (ShellSorter.SINGLETON is null) {
+                    ShellSorter.SINGLETON = new ShellSorter();
+                }
+
+                return ShellSorter.SINGLETON;
+            }
+        }
+
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             int size = high - low;
 
@@ -17,6 +33,18 @@ namespace Sorting {
                     list[j] = temp;
                 }
             }
+        }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as ShellSorter);
+        }
+
+        public bool Equals(ShellSorter sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
 
+// Consider different types of heaps
 namespace Sorting {
     public delegate void Heapifier(IList list, int index, int size, IComparer comparer);
 
-    public class HeapSorter : ComparisonSorter {
+    public class HeapSorter : CompareSorter, IEquatable<HeapSorter> {
         public Heapifier Heapifier {
             get;
             private set;
@@ -22,6 +23,19 @@ namespace Sorting {
             for (int index = list.Count - 1; index > 0; --index) {
                 SortUtils.Swap(list, 0, index);
                 this.Heapifier(list, 0, index, comparer);
+            }
+        }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as HeapSorter);
+        }
+
+        public bool Equals(HeapSorter sorter) {
+            if (sorter is null) {
+                return false;
+            }
+            else {
+                return this.Heapifier == sorter.Heapifier;
             }
         }
     }

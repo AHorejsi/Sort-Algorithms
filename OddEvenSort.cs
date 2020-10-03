@@ -1,7 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 namespace Sorting {
-    public class OddEvenSorter : ComparisonSorter {
+    public class OddEvenSorter : CompareSorter, IEquatable<OddEvenSorter> {
+        private static OddEvenSorter SINGLETON = null;
+
+        private OddEvenSorter() {
+        }
+
+        public static OddEvenSorter Instance {
+            get {
+                if (OddEvenSorter.SINGLETON is null) {
+                    OddEvenSorter.SINGLETON = new OddEvenSorter();
+                }
+
+                return OddEvenSorter.SINGLETON;
+            }
+        }
+
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             bool isSortedOnEvenIndices;
             bool isSortedOnOddIndices;
@@ -40,6 +56,18 @@ namespace Sorting {
             }
 
             return isSortedOnOddIndices;
+        }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as OddEvenSorter);
+        }
+
+        public bool Equals(OddEvenSorter sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
         }
     }
 }

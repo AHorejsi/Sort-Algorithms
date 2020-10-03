@@ -1,7 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 namespace Sorting {
-    public class GnomeSorter : ComparisonSorter {
+    public class GnomeSorter : CompareSorter, IEquatable<GnomeSorter> {
+        private static GnomeSorter SINGLETON = null;
+
+        private GnomeSorter() {
+        }
+
+        public static GnomeSorter Instance {
+            get {
+                if (GnomeSorter.SINGLETON is null) {
+                    GnomeSorter.SINGLETON = new GnomeSorter();
+                }
+
+                return GnomeSorter.SINGLETON;
+            }
+        }
+
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             int index = low;
 
@@ -18,6 +34,18 @@ namespace Sorting {
                     --index;
                 }
             }
+        }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as GnomeSorter);
+        }
+
+        public bool Equals(GnomeSorter sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
         }
     }
 }

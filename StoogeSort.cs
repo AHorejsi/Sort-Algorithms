@@ -1,7 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 namespace Sorting {
-    public class StoogeSorter : ComparisonSorter {
+    public class StoogeSorter : CompareSorter, IEquatable<StoogeSorter> {
+        private static StoogeSorter SINGLETON = null;
+
+        private StoogeSorter() {
+        }
+
+        public static StoogeSorter Instance {
+            get {
+                if (StoogeSorter.SINGLETON is null) {
+                    StoogeSorter.SINGLETON = new StoogeSorter();
+                }
+
+                return StoogeSorter.SINGLETON;
+            }
+        }
+
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             this.DoSort(list, low, high - 1, comparer);
         }
@@ -20,6 +36,18 @@ namespace Sorting {
                 this.DoSort(list, low + third, high, comparer);
                 this.DoSort(list, low, high - third, comparer);
             }
+        }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as StoogeSorter);
+        }
+
+        public bool Equals(StoogeSorter sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
         }
     }
 }

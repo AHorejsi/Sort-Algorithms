@@ -3,7 +3,7 @@ using System.Collections;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class MergeSorter : ComparisonSorter {
+    public class MergeSorter : CompareSorter, IEquatable<MergeSorter> {
         private MergeSortAlgorithm algorithm;
 
         internal MergeSorter(MergeSortAlgorithm algorithm) {
@@ -13,6 +13,19 @@ namespace Sorting {
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm.Sort(list, low, high, comparer);
         }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as MergeSorter);
+        }
+
+        public bool Equals(MergeSorter sorter) {
+            if (sorter is null) {
+                return false;
+            }
+            else {
+                return this.algorithm.Equals(sorter.algorithm);
+            }
+        }
     }
 
     public enum MergeType { OUT_OF_PLACE, IN_PLACE }
@@ -21,7 +34,7 @@ namespace Sorting {
     public class MergeSorterBuilder {
         private MergeType mergeType;
         private MergeSortAlgorithmType algorithmType;
-
+        
         public MergeSorterBuilder WithMergeType(MergeType mergeType) {
             this.mergeType = mergeType;
 
@@ -137,7 +150,7 @@ namespace Sorting {
         }
     }
 
-    internal abstract class MergeSortAlgorithm {
+    internal abstract class MergeSortAlgorithm : IEquatable<MergeSortAlgorithm> {
         protected Merger merger;
 
         internal MergeSortAlgorithm(Merger merger) {
@@ -152,6 +165,10 @@ namespace Sorting {
             if (comparer.Compare(list[index], list[nextIndex]) > 0) {
                 SortUtils.Swap(list, index, nextIndex);
             }
+        }
+
+        public bool Equals(MergeSortAlgorithm algorithm) {
+            return this.GetType().Equals(algorithm.GetType()) && this.merger == algorithm.merger;
         }
     }
 

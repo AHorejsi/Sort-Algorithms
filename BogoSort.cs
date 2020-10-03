@@ -1,28 +1,48 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 namespace Sorting {
     public delegate void Shuffler(IList list, int low, int high);
 
-    public class BogoSorter : ComparisonSorter {
-        public Shuffler Shuffler {
-            get;
-            private set;
-        }
+    public class BogoSorter : CompareSorter, IEquatable<BogoSorter> {
+        private readonly Shuffler shuffler;
 
-        public BogoSorter(Shuffler shuffler) {
-            this.Shuffler = shuffler;
+        internal BogoSorter(Shuffler shuffler) {
+            this.shuffler = shuffler;
         }
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             if (high - low > 1) {
                 while (!SortUtils.IsSorted(list, low, high, comparer)) {
-                    this.Shuffler(list, low, high);
+                    this.shuffler(list, low, high);
                 }
+            }
+        }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as BogoSorter);
+        }
+
+        public bool Equals(BogoSorter sorter) {
+            if (sorter is null) {
+                return false;
+            }
+            else {
+                return this.shuffler == sorter.shuffler;
+            }
+        }
+
+        public override int GetHashCode() {
+            if (this.shuffler == Shufflers.RandomShuffle) {
+                return 0;
+            }
+            else {
+                return 1;
             }
         }
     }
 
-    public static class Shufflers {
+    internal static class Shufflers {
         public static void RandomShuffle(IList list, int low, int high) {
             for (int index = low + 2; index < high; ++index) {
                 int randomIndex = SortUtils.RandomInt(low, index);
@@ -40,6 +60,20 @@ namespace Sorting {
             if (randomIndex1 != randomIndex2) {
                 SortUtils.Swap(list, randomIndex1, randomIndex2);
             }
+        }
+    }
+
+    public enum ShufflerType { RANDOM_SHUFFLE, SWAP_TWO }
+
+    public static class BogoSortFactory {
+        public static BogoSorter Make(ShufflerType type) {
+            Shuffler shuffler = type switch {
+                ShufflerType.RANDOM_SHUFFLE => Shufflers.RandomShuffle,
+                ShufflerType.SWAP_TWO => Shufflers.SwapTwo,
+                _ => throw new NotImplementedException()
+            };
+
+            return new BogoSorter(shuffler);
         }
     }
 }
