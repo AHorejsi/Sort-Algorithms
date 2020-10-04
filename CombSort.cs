@@ -2,10 +2,10 @@
 using System.Collections;
 
 namespace Sorting {
-    public class CombSorter : CompareSorter {
+    public class CombSorter : CompareSorter, IEquatable<CombSorter> {
         private static CombSorter SINGLETON = null;
 
-        private CombSorter() {
+        private CombSorter() { 
         }
 
         public static CombSorter Instance {
@@ -42,6 +42,18 @@ namespace Sorting {
             gap = (gap * 10) / 13;
 
             return (gap < 1) ? 1 : gap;
+        }
+
+        public override bool Equals(object obj) {
+            return this.Equals(obj as CombSorter);
+        }
+
+        public bool Equals(CombSorter sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
         }
     }
 }

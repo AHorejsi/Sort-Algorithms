@@ -10,7 +10,7 @@ namespace Sorting {
         }
 
         public static CountingSorter Instance {
-            get {
+            get { 
                 if (CountingSorter.SINGLETON is null) {
                     CountingSorter.SINGLETON = new CountingSorter();
                 }

@@ -18,17 +18,17 @@ namespace Sorting {
     public enum MergeType { OUT_OF_PLACE, IN_PLACE }
     public enum MergeSortAlgorithmType { RECURSIVE, ITERATIVE, ASYNC_RECURSIVE }
 
-    public class MergeSorterBuilder {
+    public class MergeSortBuilder {
         private MergeType mergeType;
         private MergeSortAlgorithmType algorithmType;
         
-        public MergeSorterBuilder WithMergeType(MergeType mergeType) {
+        public MergeSortBuilder WithMergeType(MergeType mergeType) {
             this.mergeType = mergeType;
 
             return this;
         }
 
-        public MergeSorterBuilder WithAlgorithmType(MergeSortAlgorithmType algorithmType) {
+        public MergeSortBuilder WithAlgorithmType(MergeSortAlgorithmType algorithmType) {
             this.algorithmType = algorithmType;
 
             return this;
@@ -196,11 +196,10 @@ namespace Sorting {
                 else {
                     int mid = low + (size / 2);
 
-                    Parallel.Invoke(
-                        SortUtils.ParallelOptions,
-                        () => { this.Sort(list, low, mid, comparer); },
-                        () => { this.Sort(list, mid, high, comparer); }
-                    );
+                    Task task1 = Task.Run(() => { this.Sort(list, low, mid, comparer); });
+                    Task task2 = Task.Run(() => { this.Sort(list, mid, high, comparer); });
+
+                    Task.WaitAll(task1, task2);
 
                     base.merger(list, low, mid, high, comparer);
                 }

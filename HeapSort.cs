@@ -5,43 +5,27 @@ using System.Collections;
 namespace Sorting {
     public delegate void Heapifier(IList list, int index, int size, IComparer comparer);
 
-    public class HeapSorter : CompareSorter, IEquatable<HeapSorter> {
-        public Heapifier Heapifier {
-            get;
-            private set;
-        }
+    public class HeapSorter : CompareSorter {
+        private readonly Heapifier heapifier;
 
-        public HeapSorter(Heapifier heapifier) {
-            this.Heapifier = heapifier;
+        internal HeapSorter(Heapifier heapifier) {
+            this.heapifier = heapifier;
         }
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             for (int index = (list.Count / 2) - 1; index >= 0; --index) {
-                this.Heapifier(list, index, list.Count, comparer);
+                this.heapifier(list, index, list.Count, comparer);
             }
 
             for (int index = list.Count - 1; index > 0; --index) {
                 SortUtils.Swap(list, 0, index);
-                this.Heapifier(list, 0, index, comparer);
-            }
-        }
-
-        public override bool Equals(object obj) {
-            return this.Equals(obj as HeapSorter);
-        }
-
-        public bool Equals(HeapSorter sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.Heapifier == sorter.Heapifier;
+                this.heapifier(list, 0, index, comparer);
             }
         }
     }
 
-    public static class Heapifiers {
-        public static void Iterative(IList list, int index, int size, IComparer comparer) {
+    internal static class Heapifiers {
+        public static void Binary(IList list, int index, int size, IComparer comparer) {
             while (true) {
                 int indexOfLargest = Heapifiers.GetIndexOfLargest(list, index, size, comparer);
 
@@ -55,13 +39,16 @@ namespace Sorting {
             }
         }
 
-        public static void Recursive(IList list, int index, int size, IComparer comparer) {
-            int indexOfLargest = Heapifiers.GetIndexOfLargest(list, index, size, comparer);
+        public static void Weak(IList list, int index, int size, IComparer comparer) {
+            throw new NotImplementedException();
+        }
 
-            if (index != indexOfLargest) {
-                SortUtils.Swap(list, index, indexOfLargest);
-                Heapifiers.Recursive(list, indexOfLargest, size, comparer);
-            }
+        public static void Fibonacci(IList list, int index, int size, IComparer comparer) {
+            throw new NotImplementedException();
+        }
+
+        public static void Leonardo(IList list, int index, int size, IComparer comparer) {
+            throw new NotImplementedException();
         }
 
         private static int GetIndexOfLargest(IList list, int index, int size, IComparer comparer) {
@@ -78,6 +65,22 @@ namespace Sorting {
             }
 
             return indexOfLargest;
+        }
+    }
+
+    public enum HeapType { BINARY, WEAK, FIBONACCI, LEONARDO }
+
+    public static class HeapSortFactory {
+        public static HeapSorter Make(HeapType type) {
+            Heapifier heapifier = type switch {
+                HeapType.BINARY => Heapifiers.Binary,
+                HeapType.WEAK => Heapifiers.Weak,
+                HeapType.FIBONACCI => Heapifiers.Fibonacci,
+                HeapType.LEONARDO => Heapifiers.Leonardo,
+                _ => throw new InvalidOperationException()
+            };
+
+            return new HeapSorter(heapifier);
         }
     }
 }

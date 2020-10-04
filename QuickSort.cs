@@ -20,24 +20,24 @@ namespace Sorting {
     public enum PartitionSchemeType { LOMUTO, HOARE, STABLE, THREE_WAY }
     public enum QuickSortAlgorithmType { RECURSIVE, ASYNC_RECURSIVE, ITERATIVE }
 
-    public class QuickSorterBuilder {
-        private PivotSelectorType pivotSelectorType = PivotSelectorType.MEDIAN_OF_THREE;
-        private PartitionSchemeType partitionSchemeType = PartitionSchemeType.HOARE;
-        private QuickSortAlgorithmType algorithmType = QuickSortAlgorithmType.RECURSIVE;
+    public class QuickSortBuilder {
+        private PivotSelectorType pivotSelectorType;
+        private PartitionSchemeType partitionSchemeType;
+        private QuickSortAlgorithmType algorithmType;
 
-        public QuickSorterBuilder WithPivotSelectorType(PivotSelectorType pivotSelectorType) {
+        public QuickSortBuilder WithPivotSelectorType(PivotSelectorType pivotSelectorType) {
             this.pivotSelectorType = pivotSelectorType;
 
             return this;
         }
 
-        public QuickSorterBuilder WithPartitionSchemeType(PartitionSchemeType partitionSchemeType) {
+        public QuickSortBuilder WithPartitionSchemeType(PartitionSchemeType partitionSchemeType) {
             this.partitionSchemeType = partitionSchemeType;
 
             return this;
         }
 
-        public QuickSorterBuilder WithAlgorithmType(QuickSortAlgorithmType algorithmType) {
+        public QuickSortBuilder WithAlgorithmType(QuickSortAlgorithmType algorithmType) {
             this.algorithmType = algorithmType;
 
             return this;
@@ -56,7 +56,7 @@ namespace Sorting {
                 QuickSortAlgorithmType.RECURSIVE => new RecursiveQuickSortAlgorithm(partitionScheme),
                 QuickSortAlgorithmType.ASYNC_RECURSIVE => new AsyncRecursiveQuickSortAlgorithm(partitionScheme),
                 QuickSortAlgorithmType.ITERATIVE => new IterativeQuickSortAlgorithm(partitionScheme),
-                _ => throw new NotImplementedException()
+                _ => throw new InvalidOperationException()
             };
         }
 
@@ -69,7 +69,7 @@ namespace Sorting {
                 PartitionSchemeType.HOARE => new HoarePartitionScheme(pivotSelector, partitionPointDistances.Item1, partitionPointDistances.Item2),
                 PartitionSchemeType.STABLE => new StablePartitionScheme(pivotSelector, partitionPointDistances.Item1, partitionPointDistances.Item2),
                 PartitionSchemeType.THREE_WAY => new ThreeWayPartitionScheme(pivotSelector, partitionPointDistances.Item1, partitionPointDistances.Item2),
-                _ => throw new NotImplementedException()
+                _ => throw new InvalidOperationException()
             };
         }
 
@@ -80,7 +80,7 @@ namespace Sorting {
                 PivotSelectorType.LAST => PivotSelectors.Last,
                 PivotSelectorType.RANDOM => PivotSelectors.Random,
                 PivotSelectorType.MEDIAN_OF_THREE => PivotSelectors.MedianOfThree,
-                _ => throw new NotImplementedException(),
+                _ => throw new InvalidOperationException(),
             };
         }
 
@@ -90,7 +90,7 @@ namespace Sorting {
                 PartitionSchemeType.HOARE => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.At, PartitionPointDistances.RightOne),
                 PartitionSchemeType.STABLE => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.LeftOne, PartitionPointDistances.RightOne),
                 PartitionSchemeType.THREE_WAY => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.At, PartitionPointDistances.At),
-                _ => throw new NotImplementedException()
+                _ => throw new InvalidOperationException()
             };
         }
     }
@@ -141,20 +141,19 @@ namespace Sorting {
             if (low < high) {
                 int[] partitionPoint = base.partitionScheme.Partition(list, low, high, comparer);
 
+                Task task1;
+                Task task2;
+
                 if (2 == partitionPoint.Length) {
-                    Parallel.Invoke(
-                        SortUtils.ParallelOptions,
-                        () => { this.DoSort(list, low, base.partitionScheme.left(partitionPoint[0]), comparer); },
-                        () => { this.DoSort(list, base.partitionScheme.right(partitionPoint[1]), high, comparer); }
-                    );
+                    task1 = Task.Run(() => { this.DoSort(list, low, base.partitionScheme.left(partitionPoint[0]), comparer); });
+                    task2 = Task.Run(() => { this.DoSort(list, base.partitionScheme.right(partitionPoint[1]), high, comparer); });
                 }
                 else {
-                    Parallel.Invoke(
-                        SortUtils.ParallelOptions,
-                        () => { this.DoSort(list, low, base.partitionScheme.left(partitionPoint[0]), comparer); },
-                        () => { this.DoSort(list, base.partitionScheme.right(partitionPoint[0]), high, comparer); }
-                    );
+                    task1 = Task.Run(() => { this.DoSort(list, low, base.partitionScheme.left(partitionPoint[0]), comparer); });
+                    task2 = Task.Run(() => { this.DoSort(list, base.partitionScheme.right(partitionPoint[0]), high, comparer); });
                 }
+
+                Task.WaitAll(task1, task2);
             }
         }
     }
