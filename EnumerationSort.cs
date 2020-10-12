@@ -30,7 +30,7 @@ namespace Sorting {
                     if (index != currentIndex) {
                         int comparison = comparer.Compare(obj, list[currentIndex]);
 
-                        if (comparison > 0 || (0 == comparison && currentIndex > index)) {
+                        if (comparison > 0 || (0 == comparison && currentIndex < index)) {
                             ++count;
                         }
                     }
