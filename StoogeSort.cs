@@ -2,13 +2,13 @@
 using System.Collections;
 
 namespace Sorting {
-    public class StoogeSorter : CompareSorter {
-        private static StoogeSorter SINGLETON = null;
+    public class StoogeSorter : CompareSorter, IEquatable<StoogeSorter> {
+        private static StoogeSorter? SINGLETON = null;
 
         private StoogeSorter() {
         }
 
-        public static StoogeSorter Instance {
+        public static StoogeSorter Singleton {
             get {
                 if (StoogeSorter.SINGLETON is null) {
                     StoogeSorter.SINGLETON = new StoogeSorter();
@@ -36,6 +36,20 @@ namespace Sorting {
                 this.DoSort(list, low + third, high, comparer);
                 this.DoSort(list, low, high - third, comparer);
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as StoogeSorter);
+        }
+
+        public bool Equals(StoogeSorter? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = this.GetType();
+
+            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

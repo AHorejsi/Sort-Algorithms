@@ -2,13 +2,13 @@
 using System.Collections;
 
 namespace Sorting {
-    public class PermutationSorter : CompareSorter {
-        private static PermutationSorter SINGLETON = null;
+    public class PermutationSorter : CompareSorter, IEquatable<PermutationSorter> {
+        private static PermutationSorter? SINGLETON = null;
 
         private PermutationSorter() {
         }
 
-        public static PermutationSorter Instance {
+        public static PermutationSorter Singleton {
             get { 
                 if (PermutationSorter.SINGLETON is null) {
                     PermutationSorter.SINGLETON = new PermutationSorter();
@@ -65,6 +65,20 @@ namespace Sorting {
                 ++low;
                 --high;
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as PermutationSorter);
+        }
+
+        public bool Equals(PermutationSorter? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = this.GetType();
+
+            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

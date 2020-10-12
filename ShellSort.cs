@@ -2,13 +2,13 @@
 using System.Collections;
 
 namespace Sorting {
-    public class ShellSorter : CompareSorter {
-        private static ShellSorter SINGLETON = null;
+    public class ShellSorter : CompareSorter, IEquatable<ShellSorter> {
+        private static ShellSorter? SINGLETON = null;
 
         private ShellSorter() {
         }
 
-        public static ShellSorter Instance {
+        public static ShellSorter Singleton {
             get {
                 if (ShellSorter.SINGLETON is null) {
                     ShellSorter.SINGLETON = new ShellSorter();
@@ -33,6 +33,20 @@ namespace Sorting {
                     list[j] = temp;
                 }
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as ShellSorter);
+        }
+
+        public bool Equals(ShellSorter? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = this.GetType();
+
+            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

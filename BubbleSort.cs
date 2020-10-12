@@ -2,13 +2,13 @@
 using System.Collections;
 
 namespace Sorting {
-    public class BubbleSorter : CompareSorter {
-        private static BubbleSorter SINGLETON = null;
+    public class BubbleSorter : CompareSorter, IEquatable<BubbleSorter> {
+        private static BubbleSorter? SINGLETON = null;
 
         private BubbleSorter() {
         }
 
-        public static BubbleSorter Instance {
+        public static BubbleSorter Singleton {
             get {
                 if (BubbleSorter.SINGLETON is null) {
                     BubbleSorter.SINGLETON = new BubbleSorter();
@@ -38,6 +38,20 @@ namespace Sorting {
                     return;
                 }
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as BubbleSorter);
+        }
+
+        public bool Equals(BubbleSorter? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = this.GetType();
+
+            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Sorting {
     internal delegate void BrickSortAlgorithm(IList list, int low, int high, IComparer comparer);
 
-    public class BrickSorter : CompareSorter {
+    public class BrickSorter : CompareSorter, IEquatable<BrickSorter> {
         private readonly BrickSortAlgorithm algorithm;
 
         internal BrickSorter(BrickSortAlgorithm algorithm) {
@@ -14,6 +14,32 @@ namespace Sorting {
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm(list, low, high, comparer);
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as BrickSorter);
+        }
+
+        public bool Equals(BrickSorter? sorter) {
+            if (sorter is null) {
+                return false;
+            }
+            else {
+                return this.algorithm == sorter.algorithm;
+            }
+        }
+
+        public override int GetHashCode() {
+            int algorithmHashCode;
+
+            if (this.algorithm == BrickSortAlgorithms.Sync) {
+                algorithmHashCode = -1784792866;
+            }
+            else { //this.algorithm == BrickSortAlgorithms.Async 
+                algorithmHashCode = 1743121670;
+            }
+
+            return algorithmHashCode;
         }
     }
 
@@ -74,14 +100,14 @@ namespace Sorting {
         }
     }
 
-    public enum BrickSortAlgorithmType { SYNC, ASYNC }
+    public enum BrickSortType { SYNC, ASYNC }
 
     public static class BrickSortFactory {
-        public static BrickSorter Make(BrickSortAlgorithmType type) {
+        public static BrickSorter Make(BrickSortType type) {
             return type switch {
-                BrickSortAlgorithmType.SYNC => new BrickSorter(BrickSortAlgorithms.Sync),
-                BrickSortAlgorithmType.ASYNC => new BrickSorter(BrickSortAlgorithms.Async),
-                _ => throw new NotImplementedException()
+                BrickSortType.SYNC => new BrickSorter(BrickSortAlgorithms.Sync),
+                BrickSortType.ASYNC => new BrickSorter(BrickSortAlgorithms.Async),
+                _ => throw new InvalidOperationException()
             };
         }
     }

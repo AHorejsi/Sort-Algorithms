@@ -2,13 +2,13 @@
 using System.Collections;
 
 namespace Sorting {
-    public class CocktailSorter : CompareSorter {
-        private static CocktailSorter SINGLETON = null;
+    public class CocktailSorter : CompareSorter, IEquatable<CocktailSorter> {
+        private static CocktailSorter? SINGLETON = null;
 
         private CocktailSorter() {
         }
 
-        public static CocktailSorter Instance {
+        public static CocktailSorter Singleton {
             get {
                 if (CocktailSorter.SINGLETON is null) {
                     CocktailSorter.SINGLETON = new CocktailSorter();
@@ -67,16 +67,18 @@ namespace Sorting {
             return swapped;
         }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             return this.Equals(obj as CocktailSorter);
         }
 
-        public bool Equals(CocktailSorter sorter) {
+        public bool Equals(CocktailSorter? sorter) {
             return !(sorter is null);
         }
 
         public override int GetHashCode() {
-            return base.GetHashCode();
+            Type type = this.GetType();
+
+            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Threading.Tasks;
 
 namespace Sorting {
     internal static class SortUtils {
@@ -11,7 +10,7 @@ namespace Sorting {
         }
 
         public static void Swap(IList list, int i, int j) {
-            object temp = list[i];
+            object? temp = list[i];
             list[i] = list[j];
             list[j] = temp;
         }

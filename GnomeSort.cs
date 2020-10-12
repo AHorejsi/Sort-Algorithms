@@ -2,13 +2,13 @@
 using System.Collections;
 
 namespace Sorting {
-    public class GnomeSorter : CompareSorter {
-        private static GnomeSorter SINGLETON = null;
+    public class GnomeSorter : CompareSorter, IEquatable<GnomeSorter> {
+        private static GnomeSorter? SINGLETON = null;
 
         private GnomeSorter() {
         }
 
-        public static GnomeSorter Instance {
+        public static GnomeSorter Singleton {
             get {
                 if (GnomeSorter.SINGLETON is null) {
                     GnomeSorter.SINGLETON = new GnomeSorter();
@@ -34,6 +34,20 @@ namespace Sorting {
                     --index;
                 }
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return base.Equals(obj as GnomeSorter);
+        }
+
+        public bool Equals(GnomeSorter? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = this.GetType();
+
+            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

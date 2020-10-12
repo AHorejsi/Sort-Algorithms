@@ -47,6 +47,18 @@ namespace Sorting {
             });
         }
 
+        public static async Task SortAsync(this IList list, CompareSorter sorter, Action<SortResult> callback) {
+            await Task.Run(() => {
+                list.Sort(sorter);
+
+                SortResult result = new SortResultBuilder()
+                    .WithList(list)
+                    .WithCompareSorter(sorter)
+                    .Build();
+                callback(result);
+            });
+        }
+
         public static async Task SortAsync(this IList list, CompareSorter sorter, IComparer comparer) {
             await Task.Run(() => { list.Sort(sorter, comparer); });
         }
@@ -55,6 +67,19 @@ namespace Sorting {
             await Task.Run(() => {
                 list.Sort(sorter, comparer);
                 callback();
+            });
+        }
+
+        public static async Task SortAsync(this IList list, CompareSorter sorter, IComparer comparer, Action<SortResult> callback) {
+            await Task.Run(() => {
+                list.Sort(sorter, comparer);
+
+                SortResult result = new SortResultBuilder()
+                    .WithList(list)
+                    .WithCompareSorter(sorter)
+                    .WithComparer(comparer)
+                    .Build();
+                callback(result);
             });
         }
 
@@ -69,6 +94,20 @@ namespace Sorting {
             });
         }
 
+        public static async Task SortAsync(this IList list, CompareSorter sorter, int low, int high, Action<SortResult> callback) {
+            await Task.Run(() => {
+                list.Sort(sorter, low, high);
+
+                SortResult result = new SortResultBuilder()
+                    .WithList(list)
+                    .WithCompareSorter(sorter)
+                    .WithLowIndex(low)
+                    .WithHighIndex(high)
+                    .Build();
+                callback(result);
+            });
+        }
+
         public static async Task SortAsync(this IList list, CompareSorter sorter, int low, int high, IComparer comparer) {
             await Task.Run(() => { list.Sort(sorter, low, high, comparer); });
         }
@@ -77,6 +116,21 @@ namespace Sorting {
             await Task.Run(() => {
                 list.Sort(sorter, low, high, comparer);
                 callback();
+            });
+        }
+
+        public static async Task SortAsync(this IList list, CompareSorter sorter, int low, int high, IComparer comparer, Action<SortResult> callback) {
+            await Task.Run(() => {
+                list.Sort(sorter, low, high, comparer);
+
+                SortResult result = new SortResultBuilder()
+                    .WithList(list)
+                    .WithCompareSorter(sorter)
+                    .WithLowIndex(low)
+                    .WithHighIndex(high)
+                    .WithComparer(comparer)
+                    .Build();
+                callback(result);
             });
         }
 
@@ -91,6 +145,18 @@ namespace Sorting {
             });
         }
 
+        public static async Task SortAsync(this IList list, IntegerSorter sorter, Action<SortResult> callback) {
+            await Task.Run(() => {
+                list.Sort(sorter);
+
+                SortResult result = new SortResultBuilder()
+                    .WithList(list)
+                    .WithIntegerSorter(sorter)
+                    .Build();
+                callback(result);
+            });
+        }
+
         public static async Task SortAsync(this IList list, IntegerSorter sorter, int low, int high) {
             await Task.Run(() => { list.Sort(sorter, low, high); });
         }
@@ -99,6 +165,20 @@ namespace Sorting {
             await Task.Run(() => {
                 list.Sort(sorter, low, high);
                 callback();
+            });
+        }
+
+        public static async Task SortAsync(this IList list, IntegerSorter sorter, int low, int high, Action<SortResult> callback) {
+            await Task.Run(() => {
+                list.Sort(sorter, low, high);
+
+                SortResult result = new SortResultBuilder()
+                    .WithList(list)
+                    .WithIntegerSorter(sorter)
+                    .WithLowIndex(low)
+                    .WithHighIndex(high)
+                    .Build();
+                callback(result);
             });
         }
 
@@ -113,6 +193,18 @@ namespace Sorting {
             });
         }
 
+        public static async Task SortAsync(this IList list, FloatSorter sorter, Action<SortResult> callback) {
+            await Task.Run(() => {
+                list.Sort(sorter);
+
+                SortResult result = new SortResultBuilder()
+                    .WithList(list)
+                    .WithFloatSorter(sorter)
+                    .Build();
+                callback(result);
+            });
+        }
+
         public static async Task SortAsync(this IList list, FloatSorter sorter, int low, int high) {
             await Task.Run(() => { list.Sort(sorter, low, high); });
         }
@@ -121,6 +213,20 @@ namespace Sorting {
             await Task.Run(() => {
                 list.Sort(sorter, low, high);
                 callback();
+            });
+        }
+
+        public static async Task SortAsync(this IList list, FloatSorter sorter, int low, int high, Action<SortResult> callback) {
+            await Task.Run(() => {
+                list.Sort(sorter, low, high);
+
+                SortResult result = new SortResultBuilder()
+                    .WithList(list)
+                    .WithFloatSorter(sorter)
+                    .WithLowIndex(low)
+                    .WithHighIndex(high)
+                    .Build();
+                callback(result);
             });
         }
     }

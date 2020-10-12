@@ -4,7 +4,7 @@ using System.Collections;
 namespace Sorting {
     internal delegate int Searcher(IList list, int low, int index, IComparer comparer);
 
-    public class InsertionSorter : CompareSorter {
+    public class InsertionSorter : CompareSorter, IEquatable<InsertionSorter> {
         private readonly Searcher searcher;
 
         internal InsertionSorter(Searcher searcher) {
@@ -21,6 +21,41 @@ namespace Sorting {
                     }
                 }
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as InsertionSorter);
+        }
+
+        public bool Equals(InsertionSorter? sorter) {
+            if (sorter is null) {
+                return false;
+            }
+            else {
+                return this.searcher == sorter.searcher;
+            }
+        }
+
+        public override int GetHashCode() {
+            int searcherHashCode;
+
+            if (this.searcher == Searchers.Linear) {
+                searcherHashCode = 843941155;
+            }
+            else if (this.searcher == Searchers.Binary) {
+                searcherHashCode = -1716325658;
+            }
+            else if (this.searcher == Searchers.Jump) {
+                searcherHashCode = 1578338564;
+            }
+            else if (this.searcher == Searchers.Exponential) {
+                searcherHashCode = -1639881796;
+            }
+            else { // this.searcher == Searchers.Fibonacci
+                searcherHashCode = -848830997;
+            }
+
+            return searcherHashCode;
         }
     }
 
@@ -56,7 +91,7 @@ namespace Sorting {
             return Searchers.DoBinary(list, index / 2, Math.Min(index, high), list[high], comparer);
         }
 
-        private static int DoBinary(IList list, int low, int high, object key, IComparer comparer) {
+        private static int DoBinary(IList list, int low, int high, object? key, IComparer comparer) {
             int left = low;
             int right = high - 1;
 
@@ -156,7 +191,7 @@ namespace Sorting {
                 SearchType.FIBONACCI => Searchers.Fibonacci,
                 SearchType.EXPONENTIAL => Searchers.Exponential,
                 SearchType.JUMP => Searchers.Jump,
-                _ => throw new NotImplementedException(),
+                _ => throw new InvalidOperationException(),
             };
 
             return new InsertionSorter(searcher);

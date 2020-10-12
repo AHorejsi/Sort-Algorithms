@@ -3,12 +3,12 @@ using System.Collections;
 
 namespace Sorting {
     public class CombSorter : CompareSorter, IEquatable<CombSorter> {
-        private static CombSorter SINGLETON = null;
+        private static CombSorter? SINGLETON = null;
 
         private CombSorter() { 
         }
 
-        public static CombSorter Instance {
+        public static CombSorter Singleton {
             get { 
                 if (CombSorter.SINGLETON is null) {
                     CombSorter.SINGLETON = new CombSorter();
@@ -27,9 +27,10 @@ namespace Sorting {
                 swapped = false;
                 int end = high - gap;
 
+                
                 for (int index = low; index < end; ++index) {
                     int nextIndex = index + gap;
-
+                    
                     if (comparer.Compare(list[nextIndex], list[index]) < 0) {
                         SortUtils.Swap(list, index, nextIndex);
                         swapped = true;
@@ -44,16 +45,18 @@ namespace Sorting {
             return (gap < 1) ? 1 : gap;
         }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             return this.Equals(obj as CombSorter);
         }
 
-        public bool Equals(CombSorter sorter) {
+        public bool Equals(CombSorter? sorter) {
             return !(sorter is null);
         }
 
         public override int GetHashCode() {
-            return base.GetHashCode();
+            Type type = this.GetType();
+
+            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

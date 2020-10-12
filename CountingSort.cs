@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Sorting {
-    public class CountingSorter : IntegerSorter {
-        private static CountingSorter SINGLETON = null;
+    public class CountingSorter : IntegerSorter, IEquatable<CountingSorter> {
+        private static CountingSorter? SINGLETON = null;
 
         private CountingSorter() {
         }
 
-        public static CountingSorter Instance {
+        public static CountingSorter Singleton {
             get { 
                 if (CountingSorter.SINGLETON is null) {
                     CountingSorter.SINGLETON = new CountingSorter();
@@ -30,7 +30,7 @@ namespace Sorting {
             this.FillWithZeroes(counts, result);
 
             for (int index = low; index < high; ++index) {
-                ++(counts[(int)(list[index]) - minimum]);
+                ++(counts[(int)(list[index])! - minimum]);
             }
 
             for (int index = 1; index < range; ++index) {
@@ -38,18 +38,18 @@ namespace Sorting {
             }
 
             for (int index = high - 1; index >= low; --index) {
-                result[counts[(int)(list[index]) - minimum] - 1] = list[index];
-                --(counts[(int)(list[index]) - minimum]);
+                result[counts[(int)(list[index])! - minimum] - 1] = list[index];
+                --(counts[(int)(list[index])! - minimum]);
             }
 
             this.Move(list, low, result);
         }
 
         private int FindMinimum(IList list, int low, int high) {
-            int minimum = (int)list[low];
+            int minimum = (int)list[low]!;
             
             for (int index = low + 1; index < high; ++index) {
-                int current = (int)list[index];
+                int current = (int)list[index]!;
 
                 if (minimum > current) {
                     minimum = current;
@@ -60,10 +60,10 @@ namespace Sorting {
         }
 
         private int FindMaximum(IList list, int low, int high) {
-            int maximum = (int)list[low];
+            int maximum = (int)list[low]!;
 
             for (int index = low + 1; index < high; ++index) {
-                int current = (int)list[index];
+                int current = (int)list[index]!;
 
                 if (maximum < current) {
                     maximum = current;
@@ -86,10 +86,24 @@ namespace Sorting {
         private void Move(IList list, int low, ArrayList result) {
             int index = low;
 
-            foreach (object val in result) {
+            foreach (object? val in result) {
                 list[index] = val;
                 ++index;
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as CountingSorter);
+        }
+
+        public bool Equals(CountingSorter? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = this.GetType();
+
+            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

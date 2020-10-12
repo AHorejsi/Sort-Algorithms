@@ -3,8 +3,8 @@ using System.Collections;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class MergeSorter : CompareSorter {
-        private MergeSortAlgorithm algorithm;
+    public class MergeSorter : CompareSorter, IEquatable<MergeSorter> {
+        private readonly MergeSortAlgorithm algorithm;
 
         internal MergeSorter(MergeSortAlgorithm algorithm) {
             this.algorithm = algorithm;
@@ -13,22 +13,39 @@ namespace Sorting {
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm.Sort(list, low, high, comparer);
         }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as MergeSorter);
+        }
+
+        public bool Equals(MergeSorter? sorter) {
+            if (sorter is null) {
+                return false;
+            }
+            else {
+                return this.algorithm.Equals(sorter.algorithm);
+            }
+        }
+
+        public override int GetHashCode() {
+            return this.algorithm.GetHashCode();
+        }
     }
 
     public enum MergeType { OUT_OF_PLACE, IN_PLACE }
-    public enum MergeSortAlgorithmType { RECURSIVE, ITERATIVE, ASYNC_RECURSIVE }
+    public enum MergeSortType { RECURSIVE, ITERATIVE, ASYNC_RECURSIVE }
 
     public class MergeSortBuilder {
         private MergeType mergeType;
-        private MergeSortAlgorithmType algorithmType;
+        private MergeSortType algorithmType;
         
-        public MergeSortBuilder WithMergeType(MergeType mergeType) {
+        public MergeSortBuilder WithMerge(MergeType mergeType) {
             this.mergeType = mergeType;
 
             return this;
         }
 
-        public MergeSortBuilder WithAlgorithmType(MergeSortAlgorithmType algorithmType) {
+        public MergeSortBuilder WithAlgorithm(MergeSortType algorithmType) {
             this.algorithmType = algorithmType;
 
             return this;
@@ -44,10 +61,10 @@ namespace Sorting {
             Merger merger = this.MakeMerger();
 
             return this.algorithmType switch {
-                MergeSortAlgorithmType.RECURSIVE => new RecursiveMergeSortAlgorithm(merger),
-                MergeSortAlgorithmType.ASYNC_RECURSIVE => new AsyncRecursiveMergeSortAlgorithm(merger),
-                MergeSortAlgorithmType.ITERATIVE => new IterativeMergeSortAlgorithm(merger),
-                _ => throw new NotImplementedException()
+                MergeSortType.RECURSIVE => new RecursiveMergeSortAlgorithm(merger),
+                MergeSortType.ASYNC_RECURSIVE => new AsyncRecursiveMergeSortAlgorithm(merger),
+                MergeSortType.ITERATIVE => new IterativeMergeSortAlgorithm(merger),
+                _ => throw new InvalidOperationException()
             };
         }
 
@@ -55,7 +72,7 @@ namespace Sorting {
             return this.mergeType switch {
                 MergeType.OUT_OF_PLACE => Mergers.OutOfPlaceMerge,
                 MergeType.IN_PLACE => Mergers.InPlaceMerge,
-                _ => throw new NotImplementedException()
+                _ => throw new InvalidOperationException()
             };
         }
     }
@@ -119,7 +136,7 @@ namespace Sorting {
                     ++low;
                 }
                 else {
-                    object value = list[start];
+                    object? value = list[start];
                     int index = start;
 
                     while (index != low) {
@@ -154,8 +171,21 @@ namespace Sorting {
             }
         }
 
-        public bool Equals(MergeSortAlgorithm algorithm) {
-            return this.GetType().Equals(algorithm.GetType()) && this.merger == algorithm.merger;
+        public bool Equals(MergeSortAlgorithm? algorithm) {
+            return this.merger == algorithm!.merger;
+        }
+
+        public override int GetHashCode() {
+            int mergerHashCode;
+
+            if (this.merger == Mergers.OutOfPlaceMerge) {
+                mergerHashCode = 1528339773;
+            }
+            else { // this.merger == Mergers.InPlaceMerge
+                mergerHashCode = 305729187;
+            }
+
+            return this.GetType().GetHashCode() + mergerHashCode;
         }
     }
 

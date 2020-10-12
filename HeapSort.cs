@@ -5,7 +5,7 @@ using System.Collections;
 namespace Sorting {
     public delegate void Heapifier(IList list, int index, int size, IComparer comparer);
 
-    public class HeapSorter : CompareSorter {
+    public class HeapSorter : CompareSorter, IEquatable<HeapSorter> {
         private readonly Heapifier heapifier;
 
         internal HeapSorter(Heapifier heapifier) {
@@ -20,6 +20,19 @@ namespace Sorting {
             for (int index = list.Count - 1; index > 0; --index) {
                 SortUtils.Swap(list, 0, index);
                 this.heapifier(list, 0, index, comparer);
+            }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as HeapSorter);
+        }
+
+        public bool Equals(HeapSorter? sorter) {
+            if (sorter is null) {
+                return false;
+            }
+            else {
+                return this.heapifier == sorter.heapifier;
             }
         }
     }

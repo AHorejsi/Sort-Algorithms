@@ -4,7 +4,7 @@ using System.Collections;
 namespace Sorting {
     internal delegate void SelectionSortAlgorithm(IList list, int low, int high, IComparer comparer);
 
-    public class SelectionSorter : CompareSorter {
+    public class SelectionSorter : CompareSorter, IEquatable<SelectionSorter> {
         private readonly SelectionSortAlgorithm algorithm;
 
         internal SelectionSorter(SelectionSortAlgorithm algorithm) {
@@ -13,6 +13,35 @@ namespace Sorting {
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm(list, low, high, comparer);
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as SelectionSorter);
+        }
+
+        public bool Equals(SelectionSorter? sorter) {
+            if (sorter is null) {
+                return false;
+            }
+            else {
+                return this.algorithm == sorter!.algorithm;
+            }
+        }
+
+        public override int GetHashCode() {
+            int algorithmHashCode;
+
+            if (this.algorithm == SelectionSortAlgorithms.Standard) {
+                algorithmHashCode = 1279918117;
+            }
+            else if (this.algorithm == SelectionSortAlgorithms.Stable) {
+                algorithmHashCode = 1176085424;
+            }
+            else { // this.algorithm == SelectionSortAlgorithms.Double
+                algorithmHashCode = 378909439;
+            }
+
+            return algorithmHashCode;
         }
     }
 
@@ -38,7 +67,7 @@ namespace Sorting {
         }
 
         public static void StableSwap(IList list, int targetIndex, int index) {
-            object temp = list[targetIndex];
+            object? temp = list[targetIndex];
 
             while (index > targetIndex) {
                 SortUtils.Swap(list, index, index - 1);
@@ -103,14 +132,14 @@ namespace Sorting {
         }
     }
 
-    public enum SelectionSortAlgorithmType { STANDARD, STABLE, DOUBLE }
+    public enum SelectionSortType { STANDARD, STABLE, DOUBLE }
 
     public static class SelectionSortFactory {
-        public static SelectionSorter Make(SelectionSortAlgorithmType type) {
+        public static SelectionSorter Make(SelectionSortType type) {
             SelectionSortAlgorithm algorithm = type switch {
-                SelectionSortAlgorithmType.STANDARD => SelectionSortAlgorithms.Standard,
-                SelectionSortAlgorithmType.STABLE => SelectionSortAlgorithms.Stable,
-                SelectionSortAlgorithmType.DOUBLE => SelectionSortAlgorithms.Double,
+                SelectionSortType.STANDARD => SelectionSortAlgorithms.Standard,
+                SelectionSortType.STABLE => SelectionSortAlgorithms.Stable,
+                SelectionSortType.DOUBLE => SelectionSortAlgorithms.Double,
                 _ => throw new InvalidOperationException()
             };
 
