@@ -5,7 +5,7 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Folder Include="Generic\" />
-	  <Folder Include="Linked\" />
+		<Folder Include="Generic\" />
+		<Folder Include="Linked\" />
 	</ItemGroup>
 </Project>

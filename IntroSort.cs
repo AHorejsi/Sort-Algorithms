@@ -24,7 +24,7 @@ namespace Sorting {
         }
 
         public override void Sort(IList list, int low, int high, IComparer comparer) {
-            this.DoSort(list, low, high - 1, comparer, (int)(Math.Log2(high - low)));
+            this.DoSort(list, low, high - 1, comparer, (int)(2 * Math.Log2(high - low)));
         }
 
         private void DoSort(IList list, int low, int high, IComparer comparer, int depthLimit) {
@@ -57,14 +57,5 @@ namespace Sorting {
 
             return type.GetHashCode() + type.Name.GetHashCode();
         }
-    }
-
-    internal abstract class IntroSortAlgorithm {
-        
-
-        internal IntroSortAlgorithm() {
-        }
-
-        internal abstract void Sort(IList list, int low, int high, IComparer comparer);
     }
 }
