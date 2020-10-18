@@ -3,16 +3,6 @@ using System.Collections;
 using System.Dynamic;
 
 namespace Sorting {
-    public class SortResult {
-        public dynamic Data {
-            get;
-        }
-
-        internal SortResult(dynamic data) {
-            this.Data = data;
-        }
-    }
-
     internal class SortResultBuilder {
         private IList? list = null;
         private int? lowIndex = null;
@@ -62,12 +52,12 @@ namespace Sorting {
             return this;
         }
 
-        public SortResult Build() {
+        public dynamic Build() {
             this.DoErrorCheck();
 
             dynamic data = new ExpandoObject();
-            data.List = this.list;
-            data.Sorter = this.sorter;
+            data.List = this.list!;
+            data.Sorter = this.sorter!;
 
             if (this.lowIndex is null) {
                 data.LowIndex = 0;
@@ -87,30 +77,22 @@ namespace Sorting {
                 }
             }
 
-            return new SortResult(data);
+            return data;
         }
 
         private void DoErrorCheck() {
             if (this.list is null) {
                 throw new ArgumentNullException("list must not be null");
             }
-            if (!(this.comparer is null) && !(this.sorter is CompareSorter)) {
-                throw new ArgumentException("If a comparer is to be defined, then the sorter must be of type CompareSorter");
-            }
-            if (this.lowIndex is null ^ this.highIndex is null) {
-                throw new ArgumentException("If bounds are to be defined, both a lower bound and an upper bound must be defined. Defined neither for sorting the entire list");
-            }
             if (this.sorter is null) {
                 throw new ArgumentNullException("sorter must not be null");
             }
-        }
-
-        public void Reset() {
-            this.list = null;
-            this.lowIndex = -1;
-            this.highIndex = -1;
-            this.comparer = null;
-            this.sorter = null;
+            if (!(this.comparer is null || this.sorter is CompareSorter)) {
+                throw new ArgumentException("If a comparer is to be defined, then the sorter must be of type CompareSorter");
+            }
+            if (this.lowIndex is null ^ this.highIndex is null) {
+                throw new ArgumentException("If bounds are to be defined, both a lower bound and an upper bound must be defined. Define neither for sorting the entire list");
+            }
         }
     }
 }

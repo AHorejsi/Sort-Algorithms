@@ -47,11 +47,11 @@ namespace Sorting {
             });
         }
 
-        public static async Task SortAsync(this IList list, CompareSorter sorter, Action<SortResult> callback) {
+        public static async Task SortAsync(this IList list, CompareSorter sorter, Action<dynamic> callback) {
             await Task.Run(() => {
                 list.Sort(sorter);
 
-                SortResult result = new SortResultBuilder()
+                dynamic result = new SortResultBuilder()
                     .WithList(list)
                     .WithCompareSorter(sorter)
                     .Build();
@@ -70,11 +70,11 @@ namespace Sorting {
             });
         }
 
-        public static async Task SortAsync(this IList list, CompareSorter sorter, IComparer comparer, Action<SortResult> callback) {
+        public static async Task SortAsync(this IList list, CompareSorter sorter, IComparer comparer, Action<dynamic> callback) {
             await Task.Run(() => {
                 list.Sort(sorter, comparer);
 
-                SortResult result = new SortResultBuilder()
+                dynamic result = new SortResultBuilder()
                     .WithList(list)
                     .WithCompareSorter(sorter)
                     .WithComparer(comparer)
@@ -94,11 +94,11 @@ namespace Sorting {
             });
         }
 
-        public static async Task SortAsync(this IList list, CompareSorter sorter, int low, int high, Action<SortResult> callback) {
+        public static async Task SortAsync(this IList list, CompareSorter sorter, int low, int high, Action<dynamic> callback) {
             await Task.Run(() => {
                 list.Sort(sorter, low, high);
 
-                SortResult result = new SortResultBuilder()
+                dynamic result = new SortResultBuilder()
                     .WithList(list)
                     .WithCompareSorter(sorter)
                     .WithLowIndex(low)
@@ -119,11 +119,11 @@ namespace Sorting {
             });
         }
 
-        public static async Task SortAsync(this IList list, CompareSorter sorter, int low, int high, IComparer comparer, Action<SortResult> callback) {
+        public static async Task SortAsync(this IList list, CompareSorter sorter, int low, int high, IComparer comparer, Action<dynamic> callback) {
             await Task.Run(() => {
                 list.Sort(sorter, low, high, comparer);
 
-                SortResult result = new SortResultBuilder()
+                dynamic result = new SortResultBuilder()
                     .WithList(list)
                     .WithCompareSorter(sorter)
                     .WithLowIndex(low)
@@ -145,11 +145,11 @@ namespace Sorting {
             });
         }
 
-        public static async Task SortAsync(this IList list, IntegerSorter sorter, Action<SortResult> callback) {
+        public static async Task SortAsync(this IList list, IntegerSorter sorter, Action<dynamic> callback) {
             await Task.Run(() => {
                 list.Sort(sorter);
 
-                SortResult result = new SortResultBuilder()
+                dynamic result = new SortResultBuilder()
                     .WithList(list)
                     .WithIntegerSorter(sorter)
                     .Build();
@@ -168,11 +168,11 @@ namespace Sorting {
             });
         }
 
-        public static async Task SortAsync(this IList list, IntegerSorter sorter, int low, int high, Action<SortResult> callback) {
+        public static async Task SortAsync(this IList list, IntegerSorter sorter, int low, int high, Action<dynamic> callback) {
             await Task.Run(() => {
                 list.Sort(sorter, low, high);
 
-                SortResult result = new SortResultBuilder()
+                dynamic result = new SortResultBuilder()
                     .WithList(list)
                     .WithIntegerSorter(sorter)
                     .WithLowIndex(low)
@@ -193,11 +193,11 @@ namespace Sorting {
             });
         }
 
-        public static async Task SortAsync(this IList list, FloatSorter sorter, Action<SortResult> callback) {
+        public static async Task SortAsync(this IList list, FloatSorter sorter, Action<dynamic> callback) {
             await Task.Run(() => {
                 list.Sort(sorter);
 
-                SortResult result = new SortResultBuilder()
+                dynamic result = new SortResultBuilder()
                     .WithList(list)
                     .WithFloatSorter(sorter)
                     .Build();
@@ -216,11 +216,11 @@ namespace Sorting {
             });
         }
 
-        public static async Task SortAsync(this IList list, FloatSorter sorter, int low, int high, Action<SortResult> callback) {
+        public static async Task SortAsync(this IList list, FloatSorter sorter, int low, int high, Action<dynamic> callback) {
             await Task.Run(() => {
                 list.Sort(sorter, low, high);
 
-                SortResult result = new SortResultBuilder()
+                dynamic result = new SortResultBuilder()
                     .WithList(list)
                     .WithFloatSorter(sorter)
                     .WithLowIndex(low)

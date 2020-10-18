@@ -44,7 +44,7 @@ namespace Sorting {
         }
 
         public override int GetHashCode() {
-            Type type = this.GetType();
+            Type type = base.GetType();
 
             return type.GetHashCode() + type.Name.GetHashCode();
         }

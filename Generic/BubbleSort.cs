@@ -1,24 +1,24 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 
-namespace Sorting {
-    public class BubbleSorter : CompareSorter, IEquatable<BubbleSorter> {
-        private static BubbleSorter? SINGLETON = null;
+namespace Sorting.Generic {
+    public class BubbleSorter<T> : CompareSorter<T>, IEquatable<BubbleSorter<T>> {
+        private static BubbleSorter<T>? SINGLETON = null;
 
         private BubbleSorter() {
         }
 
-        public static BubbleSorter Singleton {
+        public static BubbleSorter<T> Singleton {
             get {
-                if (BubbleSorter.SINGLETON is null) {
-                    BubbleSorter.SINGLETON = new BubbleSorter();
+                if (BubbleSorter<T>.SINGLETON is null) {
+                    BubbleSorter<T>.SINGLETON = new BubbleSorter<T>();
                 }
 
-                return BubbleSorter.SINGLETON;
+                return BubbleSorter<T>.SINGLETON;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public override void Sort<R>(IList<R> list, int low, int high, IComparer<R> comparer) {
             for (int i = low + 1; i < high; ++i) {
                 bool swapped = false;
                 int j = low;
@@ -41,10 +41,10 @@ namespace Sorting {
         }
 
         public override bool Equals(object? obj) {
-            return this.Equals(obj as BubbleSorter);
+            return this.Equals(obj as BubbleSorter<T>);
         }
 
-        public bool Equals(BubbleSorter? sorter) {
+        public bool Equals(BubbleSorter<T>? sorter) {
             return !(sorter is null);
         }
 

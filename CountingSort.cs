@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Sorting {
     public class CountingSorter : IntegerSorter, IEquatable<CountingSorter> {
@@ -24,10 +23,8 @@ namespace Sorting {
             int maximum = this.FindMaximum(list, low, high);
             int range = maximum - minimum + 1;
 
-            List<int> counts = new List<int>(range);
-            ArrayList result = new ArrayList(high - low);
-
-            this.FillWithZeroes(counts, result);
+            int[] counts = new int[range];
+            object[] result = new object[high - low];
 
             for (int index = low; index < high; ++index) {
                 ++(counts[(int)(list[index])! - minimum]);
@@ -38,7 +35,7 @@ namespace Sorting {
             }
 
             for (int index = high - 1; index >= low; --index) {
-                result[counts[(int)(list[index])! - minimum] - 1] = list[index];
+                result[counts[(int)(list[index])! - minimum] - 1] = list[index]!;
                 --(counts[(int)(list[index])! - minimum]);
             }
 
@@ -73,17 +70,7 @@ namespace Sorting {
             return maximum;
         }
 
-        private void FillWithZeroes(List<int> counts, ArrayList result) {
-            for (int index = 0; index < counts.Capacity; ++index) {
-                counts.Add(0);
-            }
-
-            for (int index = 0; index < result.Capacity; ++index) {
-                result.Add(0);
-            }
-        }
-
-        private void Move(IList list, int low, ArrayList result) {
+        private void Move(IList list, int low, object[] result) {
             int index = low;
 
             foreach (object? val in result) {
@@ -101,7 +88,7 @@ namespace Sorting {
         }
 
         public override int GetHashCode() {
-            Type type = this.GetType();
+            Type type = base.GetType();
 
             return type.GetHashCode() + type.Name.GetHashCode();
         }

@@ -126,11 +126,11 @@ namespace Sorting {
         internal abstract void Sort(IList list, int low, int high, IComparer comparer);
 
         public bool Equals(QuickSortAlgorithm? algorithm) {
-            return this.GetType().Equals(algorithm!.GetType()) && this.partitionScheme.Equals(algorithm!.partitionScheme);
+            return base.GetType().Equals(algorithm!.GetType()) && this.partitionScheme.Equals(algorithm!.partitionScheme);
         }
 
         public override int GetHashCode() {
-            return this.GetType().GetHashCode() + this.partitionScheme.GetHashCode();
+            return base.GetType().GetHashCode() + this.partitionScheme.GetHashCode();
         }
     }
 
@@ -246,7 +246,7 @@ namespace Sorting {
         internal abstract int[] Partition(IList list, int low, int high, IComparer comparer);
 
         public bool Equals(PartitionScheme? partitionScheme) {
-            return this.GetType().Equals(partitionScheme!.GetType()) &&
+            return base.GetType().Equals(partitionScheme!.GetType()) &&
                     this.pivotSelector == partitionScheme!.pivotSelector;
         }
 

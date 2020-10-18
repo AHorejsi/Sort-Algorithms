@@ -23,7 +23,7 @@ namespace Sorting {
             EnumPosition[] positionArray = new EnumPosition[high - low];
 
             Parallel.For(low, high, (index) => {
-                int count = low;
+                int sortedIndex = low;
                 object? obj = list[index];
 
                 for (int currentIndex = low; currentIndex < high; ++currentIndex) {
@@ -31,12 +31,12 @@ namespace Sorting {
                         int comparison = comparer.Compare(obj, list[currentIndex]);
 
                         if (comparison > 0 || (0 == comparison && currentIndex < index)) {
-                            ++count;
+                            ++sortedIndex;
                         }
                     }
                 }
 
-                positionArray[index - low] = new EnumPosition(obj, count);
+                positionArray[index - low] = new EnumPosition(obj, sortedIndex);
             });
 
             Parallel.ForEach(positionArray, (enumPosition) => {
@@ -53,13 +53,13 @@ namespace Sorting {
         }
 
         public override int GetHashCode() {
-            Type type = this.GetType();
+            Type type = base.GetType();
 
             return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 
-    internal struct EnumPosition {
+    internal readonly struct EnumPosition {
         public object? Value {
             get;
         }

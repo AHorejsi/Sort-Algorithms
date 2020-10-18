@@ -37,7 +37,7 @@ namespace Sorting {
         }
 
         public override bool Equals(object? obj) {
-            return base.Equals(obj as GnomeSorter);
+            return this.Equals(obj as GnomeSorter);
         }
 
         public bool Equals(GnomeSorter? sorter) {
@@ -45,7 +45,7 @@ namespace Sorting {
         }
 
         public override int GetHashCode() {
-            Type type = this.GetType();
+            Type type = base.GetType();
 
             return type.GetHashCode() + type.Name.GetHashCode();
         }
