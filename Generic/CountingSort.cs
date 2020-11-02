@@ -5,21 +5,16 @@ namespace Sorting.Generic {
     public class CountingSorter<T> : IntegerSorter<T>, IEquatable<CountingSorter<T>> {
         private static CountingSorter<T>? SINGLETON = null;
 
-        private CountingSorter() {
+        private CountingSorter() : base() {
         }
 
         public static CountingSorter<T> Singleton {
             get {
-                if (SortUtils.IsIntegerType<T>()) {
-                    if (CountingSorter<T>.SINGLETON is null) {
-                        CountingSorter<T>.SINGLETON = new CountingSorter<T>();
-                    }
+                if (CountingSorter<T>.SINGLETON is null) {
+                    CountingSorter<T>.SINGLETON = new CountingSorter<T>();
+                }
 
-                    return CountingSorter<T>.SINGLETON;
-                }
-                else {
-                    throw new InvalidOperationException("Generic type must be an integer type");
-                }
+                return CountingSorter<T>.SINGLETON;
             }
         }
 
@@ -28,9 +23,8 @@ namespace Sorting.Generic {
             int maximum = this.FindMaximum(list, low, high);
             int range = maximum - minimum + 1;
 
-            List<int> counts = new List<int>(range);
-            List<T> result = new List<T>();
-            this.FillWithZeroes(counts, result);
+            int[] counts = new int[range];
+            T[] result = new T[high - low];
 
             for (int index = low; index < high; ++index) {
                 ++(counts[Convert.ToInt32(list[index]) - minimum]);
@@ -41,8 +35,10 @@ namespace Sorting.Generic {
             }
 
             for (int index = high - 1; index >= low; --index) {
-                result[counts[Convert.ToInt32(list[index]) - minimum] - 1] = list[index];
-                --(counts[Convert.ToInt32(list[index]) - minimum]);
+                int indexOfCounts = Convert.ToInt32(list[index]) - minimum;
+
+                result[counts[indexOfCounts] - 1] = list[index];
+                --(counts[indexOfCounts]);
             }
 
             this.Move(list, low, result);
@@ -76,17 +72,7 @@ namespace Sorting.Generic {
             return maximum;
         }
 
-        private void FillWithZeroes(List<int> counts, List<T> result) {
-            for (int index = 0; index < counts.Capacity; ++index) {
-                counts.Add(0);
-            }
-
-            for (int index = 0; index < result.Capacity; ++index) {
-                result.Add(default!);
-            }
-        }
-
-        private void Move(IList<T> list, int low, List<T> result) {
+        private void Move(IList<T> list, int low, T[] result) {
             int index = low;
 
             foreach (T val in result) {

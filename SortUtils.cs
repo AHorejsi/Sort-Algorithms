@@ -20,13 +20,24 @@ namespace Sorting {
                 typeof(int),
                 typeof(uint),
                 typeof(long),
-                typeof(ulong)
+                typeof(ulong),
+                typeof(byte?),
+                typeof(sbyte?),
+                typeof(short?),
+                typeof(ushort?),
+                typeof(int?),
+                typeof(uint?),
+                typeof(long?),
+                typeof(ulong?)
             );
 
             SortUtils.floatTypeSet = ImmutableArray.Create(
                 typeof(float),
                 typeof(double),
-                typeof(decimal)
+                typeof(decimal),
+                typeof(float?),
+                typeof(double?),
+                typeof(decimal?)
             );
         }
 
@@ -55,6 +66,26 @@ namespace Sorting {
         public static bool IsSorted(IList list, int low, int high, IComparer comparer) {
             for (int index = low; index < high - 1; ++index) {
                 if (comparer.Compare(list[index], list[index + 1]) > 0) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool IsSorted<T>(IList<T> list, int low, int high, IComparer<T> comparer) {
+            for (int index = low; index < high - 1; ++index) {
+                if (comparer.Compare(list[index], list[index + 1]) > 0) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool IsSorted<T>(LinkedListNode<T> first, LinkedListNode<T> last, IComparer<T> comparer) {
+            for (LinkedListNode<T> node = first; node != last; node = node.Next!) {
+                if (comparer.Compare(node.Value, node.Next!.Value) > 0) {
                     return false;
                 }
             }

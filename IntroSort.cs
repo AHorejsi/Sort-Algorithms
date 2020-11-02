@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Sorting {
     public class IntroSorter : CompareSorter, IEquatable<IntroSorter> {
         private readonly byte simpleSortLimit = 16;
-        private readonly CompareSorter simpleSorter = InsertionSortFactory.Make(SearchType.BINARY);
+        private readonly CompareSorter simpleSorter = InsertionSortFactory.Make(SearchType.LINEAR);
         private readonly CompareSorter depthLimitSorter = HeapSortFactory.Make(HeapType.BINARY);
         private readonly PartitionScheme partitionScheme = new HoarePartitionScheme(PivotSelectors.MedianOfThree);
         private static IntroSorter? SINGLETON = null;

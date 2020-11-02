@@ -22,7 +22,7 @@ namespace Sorting {
             int index = low;
 
             while (index < high) {
-                if (0 == index) {
+                if (low == index) {
                     ++index;
                 }
 

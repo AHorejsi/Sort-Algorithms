@@ -80,7 +80,7 @@ namespace Sorting {
                 RbNode node = this.FindInsertionPoint(value, comparer);
                 int comparison = comparer.Compare(value, node.valueList.First!.Value);
 
-                if (comparison == 0) {
+                if (0 == comparison) {
                     node.valueList.AddLast(value);
                 }
                 else {
@@ -123,11 +123,11 @@ namespace Sorting {
         private void InsertionCleanup(RbNode newNode) {
             RbNode parent = newNode.parent;
 
-            if (parent.color == ColorType.RED) {
+            if (ColorType.RED == parent.color) {
                 RbNode uncle = this.Uncle(newNode);
                 RbNode grandparent = this.Grandparent(newNode);
 
-                if (uncle.color == ColorType.RED) {
+                if (ColorType.RED == uncle.color) {
                     newNode.parent.color = ColorType.BLACK;
                     uncle.color = ColorType.BLACK;
                     grandparent.color = ColorType.RED;

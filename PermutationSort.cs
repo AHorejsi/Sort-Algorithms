@@ -25,33 +25,31 @@ namespace Sorting {
         }
 
         private void NextPermutation(IList list, int low, int high, IComparer comparer) {
-            if (high - low > 1) {
-                int i = high - 1;
+            int i = high - 1;
 
-                while (true) {
-                    int j = i;
-                    int k;
+            while (true) {
+                int j = i;
+                int k;
 
-                    --i;
+                --i;
 
-                    if (comparer.Compare(list[i], list[j]) < 0) {
-                        k = high;
+                if (comparer.Compare(list[i], list[j]) < 0) {
+                    k = high;
 
-                        do {
-                            --k;
-                        } while (comparer.Compare(list[i], list[k]) >= 0);
+                    do {
+                        --k;
+                    } while (comparer.Compare(list[i], list[k]) >= 0);
 
-                        SortUtils.Swap(list, i, k);
-                        this.Reverse(list, j, high);
+                    SortUtils.Swap(list, i, k);
+                    this.Reverse(list, j, high);
 
-                        return;
-                    }
+                    return;
+                }
 
-                    if (i == low) {
-                        this.Reverse(list, low, high);
+                if (i == low) {
+                    this.Reverse(list, low, high);
 
-                        return;
-                    }
+                    return;
                 }
             }
         }

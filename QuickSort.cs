@@ -24,7 +24,7 @@ namespace Sorting {
                 return false;
             }
             else {
-                return this.algorithm.Equals(sorter!.algorithm);
+                return this.algorithm.Equals(sorter.algorithm);
             }
         }
 

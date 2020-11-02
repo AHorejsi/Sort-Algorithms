@@ -24,10 +24,10 @@ namespace Sorting {
             int range = maximum - minimum + 1;
 
             int[] counts = new int[range];
-            object[] result = new object[high - low];
+            object?[] result = new object?[high - low];
 
             for (int index = low; index < high; ++index) {
-                ++(counts[(int)(list[index])! - minimum]);
+                ++(counts[(int)list[index]! - minimum]);
             }
 
             for (int index = 1; index < range; ++index) {
@@ -35,8 +35,10 @@ namespace Sorting {
             }
 
             for (int index = high - 1; index >= low; --index) {
-                result[counts[(int)(list[index])! - minimum] - 1] = list[index]!;
-                --(counts[(int)(list[index])! - minimum]);
+                int indexOfCounts = (int)list[index]! - minimum;
+
+                result[counts[indexOfCounts] - 1] = list[index]!;
+                --(counts[indexOfCounts]);
             }
 
             this.Move(list, low, result);
@@ -70,7 +72,7 @@ namespace Sorting {
             return maximum;
         }
 
-        private void Move(IList list, int low, object[] result) {
+        private void Move(IList list, int low, object?[] result) {
             int index = low;
 
             foreach (object? val in result) {

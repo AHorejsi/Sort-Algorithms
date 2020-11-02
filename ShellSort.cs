@@ -22,8 +22,8 @@ namespace Sorting {
             int size = high - low;
 
             for (int gap = size / 2; gap > 0; gap /= 2) {
-                for (int i = gap; i < size; ++i) {
-                    object temp = list[i];
+                for (int i = gap; i < high; ++i) {
+                    object? temp = list[i];
                     int j;
 
                     for (j = i; j >= gap && comparer.Compare(temp, list[j - gap]) < 0; j -= gap) {
