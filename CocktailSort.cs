@@ -2,23 +2,23 @@
 using System.Collections;
 
 namespace Sorting {
-    public class CocktailSorter : CompareSorter, IEquatable<CocktailSorter> {
-        private static CocktailSorter? SINGLETON = null;
+    public class CocktailSorter : ICompareSorter, IEquatable<CocktailSorter> {
+        private static CocktailSorter? instance = null;
 
         private CocktailSorter() {
         }
 
         public static CocktailSorter Singleton {
             get {
-                if (CocktailSorter.SINGLETON is null) {
-                    CocktailSorter.SINGLETON = new CocktailSorter();
+                if (CocktailSorter.instance is null) {
+                    CocktailSorter.instance = new CocktailSorter();
                 }
 
-                return CocktailSorter.SINGLETON;
+                return CocktailSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             bool swapped;
             --high;
 

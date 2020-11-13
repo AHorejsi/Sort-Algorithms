@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 namespace Sorting {
     internal delegate void BrickSortAlgorithm(IList list, int low, int high, IComparer comparer);
 
-    public class BrickSorter : CompareSorter, IEquatable<BrickSorter> {
+    public class BrickSorter : ICompareSorter, IEquatable<BrickSorter> {
         private readonly BrickSortAlgorithm algorithm;
 
         internal BrickSorter(BrickSortAlgorithm algorithm) {
             this.algorithm = algorithm;
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm(list, low, high, comparer);
         }
 

@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 
 namespace Sorting.Generic {
-    public abstract class CompareSorter<T> {
-        public void Sort<R>(IList<R> list) where R : T, IComparable<R> {
-            this.Sort(list, Comparer<R>.Default);
+    public interface ICompareSorter<T> {
+        public void Sort<R>(IList<R> list) where R : T, IComparable<T> {
+            this.Sort(list, Comparer<T>.Default);
         }
 
-        public void Sort<R>(IList<R> list, Comparison<R> comparison) where R : T {
-            this.Sort(list, 0, list.Count, Comparer<R>.Create(comparison));
+        void Sort<R>(IList<R> list, Comparison<T> comparison) where R : T {
+            this.Sort(list, Comparer<T>.Create(comparison));
         }
 
-        public void Sort<R>(IList<R> list, IComparer<R> comparer) where R : T {
+        void Sort<R>(IList<R> list, IComparer<T> comparer) where R : T {
             this.Sort(list, 0, list.Count, comparer);
         }
 
-        public void Sort<R>(IList<R> list, int low, int high) where R : T, IComparable<R> {
-            this.Sort(list, low, high, Comparer<R>.Default);
+        void Sort<R>(IList<R> list, int low, int high) where R : T, IComparable<T> {
+            this.Sort(list, low, high, Comparer<T>.Default);
         }
 
-        public void Sort<R>(IList<R> list, int low, int high, Comparison<R> comparison) where R : T {
-            this.Sort(list, low, high, Comparer<R>.Create(comparison));
+        void Sort<R>(IList<R> list, int low, int high, Comparison<T> comparison) where R : T {
+            this.Sort(list, low, high, Comparer<T>.Create(comparison));
         }
 
-        public abstract void Sort<R>(IList<R> list, int low, int high, IComparer<R> comparer) where R : T;
+        void Sort<R>(IList<R> list, int low, int high, IComparer<T> comparer) where R : T;
     }
 }

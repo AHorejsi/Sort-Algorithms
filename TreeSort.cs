@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Sorting {
-    public class TreeSorter : CompareSorter, IEquatable<TreeSorter> {
+    public class TreeSorter : ICompareSorter, IEquatable<TreeSorter> {
         private readonly ISortingTree tree;
 
         internal TreeSorter(ISortingTree tree) {
             this.tree = tree;
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             for (int index = low; index < high; ++index) {
                 this.tree.Insert(list[index], comparer);
             }

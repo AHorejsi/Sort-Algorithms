@@ -3,27 +3,27 @@ using System.Collections;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class IntroSorter : CompareSorter, IEquatable<IntroSorter> {
+    public class IntroSorter : ICompareSorter, IEquatable<IntroSorter> {
         private readonly byte simpleSortLimit = 16;
-        private readonly CompareSorter simpleSorter = InsertionSortFactory.Make(SearchType.LINEAR);
-        private readonly CompareSorter depthLimitSorter = HeapSortFactory.Make(HeapType.BINARY);
+        private readonly ICompareSorter simpleSorter = InsertionSortFactory.Make(SearchType.LINEAR);
+        private readonly ICompareSorter depthLimitSorter = HeapSortFactory.Make(HeapType.BINARY);
         private readonly PartitionScheme partitionScheme = new HoarePartitionScheme(PivotSelectors.MedianOfThree);
-        private static IntroSorter? SINGLETON = null;
+        private static IntroSorter? instance = null;
 
         private IntroSorter() {
         }
 
         public static IntroSorter Singleton {
             get {
-                if (IntroSorter.SINGLETON is null) {
-                    IntroSorter.SINGLETON = new IntroSorter();
+                if (IntroSorter.instance is null) {
+                    IntroSorter.instance = new IntroSorter();
                 }
 
-                return IntroSorter.SINGLETON;
+                return IntroSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             this.DoSort(list, low, high - 1, comparer, (int)(2 * Math.Log2(high - low)));
         }
 

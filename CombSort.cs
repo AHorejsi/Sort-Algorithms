@@ -2,23 +2,23 @@
 using System.Collections;
 
 namespace Sorting {
-    public class CombSorter : CompareSorter, IEquatable<CombSorter> {
-        private static CombSorter? SINGLETON = null;
+    public class CombSorter : ICompareSorter, IEquatable<CombSorter> {
+        private static CombSorter? instance = null;
 
         private CombSorter() { 
         }
 
         public static CombSorter Singleton {
             get { 
-                if (CombSorter.SINGLETON is null) {
-                    CombSorter.SINGLETON = new CombSorter();
+                if (CombSorter.instance is null) {
+                    CombSorter.instance = new CombSorter();
                 }
 
-                return CombSorter.SINGLETON;
+                return CombSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             int gap = high - low;
             bool swapped = true;
 

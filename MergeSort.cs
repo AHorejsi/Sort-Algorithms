@@ -3,14 +3,14 @@ using System.Collections;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class MergeSorter : CompareSorter, IEquatable<MergeSorter> {
+    public class MergeSorter : ICompareSorter, IEquatable<MergeSorter> {
         private readonly MergeSortAlgorithm algorithm;
 
         internal MergeSorter(MergeSortAlgorithm algorithm) {
             this.algorithm = algorithm;
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm.Sort(list, low, high, comparer);
         }
 

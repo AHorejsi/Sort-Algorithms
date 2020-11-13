@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class QuickSorter : CompareSorter, IEquatable<QuickSorter> {
+    public class QuickSorter : ICompareSorter, IEquatable<QuickSorter> {
         private readonly QuickSortAlgorithm algorithm;
 
         internal QuickSorter(QuickSortAlgorithm algorithm) {
             this.algorithm = algorithm;
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm.Sort(list, low, high, comparer);
         }
 

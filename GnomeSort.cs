@@ -2,23 +2,23 @@
 using System.Collections;
 
 namespace Sorting {
-    public class GnomeSorter : CompareSorter, IEquatable<GnomeSorter> {
-        private static GnomeSorter? SINGLETON = null;
+    public class GnomeSorter : ICompareSorter, IEquatable<GnomeSorter> {
+        private static GnomeSorter? instance = null;
 
         private GnomeSorter() {
         }
 
         public static GnomeSorter Singleton {
             get {
-                if (GnomeSorter.SINGLETON is null) {
-                    GnomeSorter.SINGLETON = new GnomeSorter();
+                if (GnomeSorter.instance is null) {
+                    GnomeSorter.instance = new GnomeSorter();
                 }
 
-                return GnomeSorter.SINGLETON;
+                return GnomeSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             int index = low;
 
             while (index < high) {

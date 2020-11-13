@@ -2,23 +2,23 @@
 using System.Collections;
 
 namespace Sorting {
-    public class StoogeSorter : CompareSorter, IEquatable<StoogeSorter> {
-        private static StoogeSorter? SINGLETON = null;
+    public class StoogeSorter : ICompareSorter, IEquatable<StoogeSorter> {
+        private static StoogeSorter? instance = null;
 
         private StoogeSorter() {
         }
 
         public static StoogeSorter Singleton {
             get {
-                if (StoogeSorter.SINGLETON is null) {
-                    StoogeSorter.SINGLETON = new StoogeSorter();
+                if (StoogeSorter.instance is null) {
+                    StoogeSorter.instance = new StoogeSorter();
                 }
 
-                return StoogeSorter.SINGLETON;
+                return StoogeSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             this.DoSort(list, low, high - 1, comparer);
         }
 

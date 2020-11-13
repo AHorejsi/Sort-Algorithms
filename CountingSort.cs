@@ -2,23 +2,23 @@
 using System.Collections;
 
 namespace Sorting {
-    public class CountingSorter : IntegerSorter, IEquatable<CountingSorter> {
-        private static CountingSorter? SINGLETON = null;
+    public class CountingSorter : IIntegerSorter, IEquatable<CountingSorter> {
+        private static CountingSorter? instance = null;
 
         private CountingSorter() {
         }
 
         public static CountingSorter Singleton {
             get { 
-                if (CountingSorter.SINGLETON is null) {
-                    CountingSorter.SINGLETON = new CountingSorter();
+                if (CountingSorter.instance is null) {
+                    CountingSorter.instance = new CountingSorter();
                 }
 
-                return CountingSorter.SINGLETON;
+                return CountingSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high) {
+        public void Sort(IList list, int low, int high) {
             int minimum = this.FindMinimum(list, low, high);
             int maximum = this.FindMaximum(list, low, high);
             int range = maximum - minimum + 1;

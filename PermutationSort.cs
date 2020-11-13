@@ -2,23 +2,23 @@
 using System.Collections;
 
 namespace Sorting {
-    public class PermutationSorter : CompareSorter, IEquatable<PermutationSorter> {
-        private static PermutationSorter? SINGLETON = null;
+    public class PermutationSorter : ICompareSorter, IEquatable<PermutationSorter> {
+        private static PermutationSorter? instance = null;
 
         private PermutationSorter() {
         }
 
         public static PermutationSorter Singleton {
             get { 
-                if (PermutationSorter.SINGLETON is null) {
-                    PermutationSorter.SINGLETON = new PermutationSorter();
+                if (PermutationSorter.instance is null) {
+                    PermutationSorter.instance = new PermutationSorter();
                 }
 
-                return PermutationSorter.SINGLETON;
+                return PermutationSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             while (!SortUtils.IsSorted(list, low, high, comparer)) {
                 this.NextPermutation(list, low, high, comparer);
             }

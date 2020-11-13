@@ -34,13 +34,13 @@ namespace Sorting {
             return this;
         }
 
-        public SortResultBuilder WithCompareSorter(CompareSorter sorter) {
+        public SortResultBuilder WithCompareSorter(ICompareSorter sorter) {
             this.sorter = sorter;
 
             return this;
         }
 
-        public SortResultBuilder WithIntegerSorter(IntegerSorter sorter) {
+        public SortResultBuilder WithIntegerSorter(IIntegerSorter sorter) {
             this.sorter = sorter;
 
             return this;
@@ -68,7 +68,7 @@ namespace Sorting {
                 data.HighIndex = this.highIndex!;
             }
 
-            if (this.sorter is CompareSorter) {
+            if (this.sorter is ICompareSorter) {
                 if (this.comparer is null) {
                     data.Compare = Comparer.Default;
                 }
@@ -87,7 +87,7 @@ namespace Sorting {
             if (this.sorter is null) {
                 throw new ArgumentNullException("sorter must not be null");
             }
-            if (!(this.comparer is null || this.sorter is CompareSorter)) {
+            if (!(this.comparer is null || this.sorter is ICompareSorter)) {
                 throw new ArgumentException("If a comparer is to be defined, then the sorter must be of type CompareSorter");
             }
             if (this.lowIndex is null ^ this.highIndex is null) {

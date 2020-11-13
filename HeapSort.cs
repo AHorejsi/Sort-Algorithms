@@ -5,14 +5,14 @@ using System.Collections;
 namespace Sorting {
     public delegate void Heapifier(IList list, int index, int size, IComparer comparer);
 
-    public class HeapSorter : CompareSorter, IEquatable<HeapSorter> {
+    public class HeapSorter : ICompareSorter, IEquatable<HeapSorter> {
         private readonly Heapifier heapifier;
 
         internal HeapSorter(Heapifier heapifier) {
             this.heapifier = heapifier;
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             for (int index = (list.Count / 2) - 1; index >= 0; --index) {
                 this.heapifier(list, index, list.Count, comparer);
             }

@@ -2,23 +2,23 @@
 using System.Collections;
 
 namespace Sorting {
-    public class ShellSorter : CompareSorter, IEquatable<ShellSorter> {
-        private static ShellSorter? SINGLETON = null;
+    public class ShellSorter : ICompareSorter, IEquatable<ShellSorter> {
+        private static ShellSorter? instance = null;
 
         private ShellSorter() {
         }
 
         public static ShellSorter Singleton {
             get {
-                if (ShellSorter.SINGLETON is null) {
-                    ShellSorter.SINGLETON = new ShellSorter();
+                if (ShellSorter.instance is null) {
+                    ShellSorter.instance = new ShellSorter();
                 }
 
-                return ShellSorter.SINGLETON;
+                return ShellSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             int size = high - low;
 
             for (int gap = size / 2; gap > 0; gap /= 2) {

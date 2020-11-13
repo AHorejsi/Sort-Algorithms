@@ -4,14 +4,14 @@ using System.Collections;
 namespace Sorting {
     internal delegate void SelectionSortAlgorithm(IList list, int low, int high, IComparer comparer);
 
-    public class SelectionSorter : CompareSorter, IEquatable<SelectionSorter> {
+    public class SelectionSorter : ICompareSorter, IEquatable<SelectionSorter> {
         private readonly SelectionSortAlgorithm algorithm;
 
         internal SelectionSorter(SelectionSortAlgorithm algorithm) {
             this.algorithm = algorithm;
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             this.algorithm(list, low, high, comparer);
         }
 
@@ -24,20 +24,20 @@ namespace Sorting {
                 return false;
             }
             else {
-                return this.algorithm == sorter!.algorithm;
+                return this.algorithm == sorter.algorithm;
             }
         }
 
         public override int GetHashCode() {
             int algorithmHashCode;
 
-            if (this.algorithm == SelectionSortAlgorithms.Standard) {
+            if (SelectionSortAlgorithms.Standard == this.algorithm) {
                 algorithmHashCode = 1279918117;
             }
-            else if (this.algorithm == SelectionSortAlgorithms.Stable) {
+            else if (SelectionSortAlgorithms.Stable == this.algorithm) {
                 algorithmHashCode = 1176085424;
             }
-            else { // this.algorithm == SelectionSortAlgorithms.Double
+            else { // SelectionSortAlgorithms.Double == this.algorithm
                 algorithmHashCode = 378909439;
             }
 

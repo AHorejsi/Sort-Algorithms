@@ -4,14 +4,14 @@ using System.Collections;
 namespace Sorting {
     internal delegate void Shuffler(IList list, int low, int high);
 
-    public class BogoSorter : CompareSorter, IEquatable<BogoSorter> {
+    public class BogoSorter : ICompareSorter, IEquatable<BogoSorter> {
         private readonly Shuffler shuffler;
 
         internal BogoSorter(Shuffler shuffler) {
             this.shuffler = shuffler;
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             while (!SortUtils.IsSorted(list, low, high, comparer)) {
                 this.shuffler(list, low, high);
             }
@@ -33,10 +33,10 @@ namespace Sorting {
         public override int GetHashCode() {
             int shufflerHashCode;
 
-            if (this.shuffler == Shufflers.RandomShuffle) {
+            if (Shufflers.RandomShuffle == this.shuffler) {
                 shufflerHashCode = 999557639;
             }
-            else { // this.shuffler == Shufflers.SwapTwo
+            else { // Shufflers.SwapTwo == this.shuffler
                 shufflerHashCode = 619567930;
             }
 

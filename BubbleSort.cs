@@ -2,23 +2,23 @@
 using System.Collections;
 
 namespace Sorting {
-    public class BubbleSorter : CompareSorter, IEquatable<BubbleSorter> {
-        private static BubbleSorter? SINGLETON = null;
+    public class BubbleSorter : ICompareSorter, IEquatable<BubbleSorter> {
+        private static BubbleSorter? instance = null;
 
         private BubbleSorter() {
         }
 
         public static BubbleSorter Singleton {
             get {
-                if (BubbleSorter.SINGLETON is null) {
-                    BubbleSorter.SINGLETON = new BubbleSorter();
+                if (BubbleSorter.instance is null) {
+                    BubbleSorter.instance = new BubbleSorter();
                 }
 
-                return BubbleSorter.SINGLETON;
+                return BubbleSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             for (int i = low + 1; i < high; ++i) {
                 bool swapped = false;
                 int j = low;

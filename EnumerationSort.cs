@@ -3,23 +3,23 @@ using System.Collections;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class EnumerationSorter : CompareSorter, IEquatable<EnumerationSorter> {
-        private static EnumerationSorter? SINGLETON = null;
+    public class EnumerationSorter : ICompareSorter, IEquatable<EnumerationSorter> {
+        private static EnumerationSorter? instance = null;
 
         private EnumerationSorter() {
         }
 
         public static EnumerationSorter Singleton {
             get {
-                if (EnumerationSorter.SINGLETON is null) {
-                    EnumerationSorter.SINGLETON = new EnumerationSorter();
+                if (EnumerationSorter.instance is null) {
+                    EnumerationSorter.instance = new EnumerationSorter();
                 }
 
-                return EnumerationSorter.SINGLETON;
+                return EnumerationSorter.instance;
             }
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             EnumPosition[] positionArray = new EnumPosition[high - low];
 
             Parallel.For(low, high, (index) => {
@@ -59,7 +59,7 @@ namespace Sorting {
         }
     }
 
-    internal readonly struct EnumPosition {
+    internal class EnumPosition {
         public object? Value {
             get;
         }

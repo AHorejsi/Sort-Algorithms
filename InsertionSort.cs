@@ -4,14 +4,14 @@ using System.Collections;
 namespace Sorting {
     internal delegate int Searcher(IList list, int low, int index, IComparer comparer);
 
-    public class InsertionSorter : CompareSorter, IEquatable<InsertionSorter> {
+    public class InsertionSorter : ICompareSorter, IEquatable<InsertionSorter> {
         private readonly Searcher searcher;
 
         internal InsertionSorter(Searcher searcher) {
             this.searcher = searcher;
         }
 
-        public override void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList list, int low, int high, IComparer comparer) {
             if (high - low > 1) {
                 for (int i = low + 1; i < high; ++i) {
                     int sortedPosition = this.searcher(list, low, i, comparer);
@@ -39,19 +39,19 @@ namespace Sorting {
         public override int GetHashCode() {
             int searcherHashCode;
 
-            if (this.searcher == Searchers.Linear) {
+            if (Searchers.Linear == this.searcher) {
                 searcherHashCode = 843941155;
             }
-            else if (this.searcher == Searchers.Binary) {
+            else if (Searchers.Binary == this.searcher) {
                 searcherHashCode = -1716325658;
             }
-            else if (this.searcher == Searchers.Jump) {
+            else if (Searchers.Jump == this.searcher) {
                 searcherHashCode = 1578338564;
             }
-            else if (this.searcher == Searchers.Exponential) {
+            else if (Searchers.Exponential == this.searcher) {
                 searcherHashCode = -1639881796;
             }
-            else { // this.searcher == Searchers.Fibonacci
+            else { // Searchers.Fibonacci == this.searcher
                 searcherHashCode = -848830997;
             }
 
