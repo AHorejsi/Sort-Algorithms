@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Threading.Tasks;
 
 namespace Sorting.Immutable {
     public interface IImmutableIntegerSorter<T> {
