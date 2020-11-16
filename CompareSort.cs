@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sorting {
     public interface ICompareSorter {
@@ -25,5 +26,29 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer);
+
+        public async Task SortAsync(IList list) {
+            await Task.Run(() => { this.Sort(list); });
+        }
+
+        public async Task SortAsync(IList list, Comparison<object?> comparison) {
+            await Task.Run(() => { this.Sort(list, comparison); });
+        }
+
+        public async Task SortAsync(IList list, IComparer comparer) {
+            await Task.Run(() => { this.Sort(list, comparer); });
+        }
+
+        public async Task SortAsync(IList list, int low, int high) {
+            await Task.Run(() => { this.Sort(list, low, high); });
+        }
+
+        public async Task SortAsync(IList list, int low, int high, Comparison<object?> comparison) {
+            await Task.Run(() => { this.Sort(list, low, high, comparison); });
+        }
+
+        public async Task SortAsync(IList list, int low, int high, IComparer comparer) {
+            await Task.Run(() => { this.Sort(list, low, high, comparer); });
+        }
     }
 }

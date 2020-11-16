@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class CombSorter : ICompareSorter, IEquatable<CombSorter> {
+    public sealed class CombSorter : ICompareSorter, IEquatable<CombSorter> {
         private static CombSorter? instance = null;
 
         private CombSorter() { 
@@ -19,6 +19,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             int gap = high - low;
             bool swapped = true;
 

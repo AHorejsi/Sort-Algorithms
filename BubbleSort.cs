@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class BubbleSorter : ICompareSorter, IEquatable<BubbleSorter> {
+    public sealed class BubbleSorter : ICompareSorter, IEquatable<BubbleSorter> {
         private static BubbleSorter? instance = null;
 
         private BubbleSorter() {
@@ -19,6 +19,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             for (int i = low + 1; i < high; ++i) {
                 bool swapped = false;
                 int j = low;

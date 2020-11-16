@@ -63,6 +63,18 @@ namespace Sorting {
             j.Value = temp;
         }
 
+        public static void CheckRange(int low, int high) {
+            if (high < low) {
+                throw new InvalidOperationException("Starting index cannot be higher than ending index");
+            }
+        }
+
+        public static void CheckLists<T>(LinkedListNode<T> first, LinkedListNode<T> last) {
+            if (object.ReferenceEquals(first.List, last.List)) {
+                throw new InvalidOperationException("The nodes are not part of the same linked list");
+            }
+        }
+
         public static bool IsSorted(IList list, int low, int high, IComparer comparer) {
             for (int index = low; index < high - 1; ++index) {
                 if (comparer.Compare(list[index], list[index + 1]) > 0) {
@@ -84,7 +96,7 @@ namespace Sorting {
         }
 
         public static bool IsSorted<T>(LinkedListNode<T> first, LinkedListNode<T> last, IComparer<T> comparer) {
-            for (LinkedListNode<T> node = first; node != last; node = node.Next!) {
+            for (LinkedListNode<T> node = first; node != last.Previous; node = node.Next!) {
                 if (comparer.Compare(node.Value, node.Next!.Value) > 0) {
                     return false;
                 }

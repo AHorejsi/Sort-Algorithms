@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class ShellSorter : ICompareSorter, IEquatable<ShellSorter> {
+    public sealed class ShellSorter : ICompareSorter, IEquatable<ShellSorter> {
         private static ShellSorter? instance = null;
 
         private ShellSorter() {
@@ -19,6 +19,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             int size = high - low;
 
             for (int gap = size / 2; gap > 0; gap /= 2) {

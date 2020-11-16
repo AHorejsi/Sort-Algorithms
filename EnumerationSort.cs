@@ -3,7 +3,7 @@ using System.Collections;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class EnumerationSorter : ICompareSorter, IEquatable<EnumerationSorter> {
+    public sealed class EnumerationSorter : ICompareSorter, IEquatable<EnumerationSorter> {
         private static EnumerationSorter? instance = null;
 
         private EnumerationSorter() {
@@ -20,6 +20,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             EnumPosition[] positionArray = new EnumPosition[high - low];
 
             Parallel.For(low, high, (index) => {

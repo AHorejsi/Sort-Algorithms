@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class CocktailSorter : ICompareSorter, IEquatable<CocktailSorter> {
+    public sealed class CocktailSorter : ICompareSorter, IEquatable<CocktailSorter> {
         private static CocktailSorter? instance = null;
 
         private CocktailSorter() {
@@ -19,6 +19,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             bool swapped;
             --high;
 

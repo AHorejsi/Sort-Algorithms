@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class CountingSorter : IIntegerSorter, IEquatable<CountingSorter> {
+    public sealed class CountingSorter : IIntegerSorter, IEquatable<CountingSorter> {
         private static CountingSorter? instance = null;
 
         private CountingSorter() {
@@ -19,6 +19,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high) {
+            SortUtils.CheckRange(low, high);
+
             int minimum = this.FindMinimum(list, low, high);
             int maximum = this.FindMaximum(list, low, high);
             int range = maximum - minimum + 1;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sorting.Generic {
     public interface ILinkedFloatSorter<T> {
@@ -9,5 +10,13 @@ namespace Sorting.Generic {
         }
 
         public void Sort(LinkedListNode<T> first, LinkedListNode<T> last);
+
+        public async Task SortAsync(LinkedList<T> list) {
+            await Task.Run(() => { this.Sort(list); });
+        }
+
+        public async Task SortAsync(LinkedListNode<T> first, LinkedListNode<T> last) {
+            await Task.Run(() => { this.Sort(first, last); });
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Collections;
 namespace Sorting {
     internal delegate void Shuffler(IList list, int low, int high);
 
-    public class BogoSorter : ICompareSorter, IEquatable<BogoSorter> {
+    public sealed class BogoSorter : ICompareSorter, IEquatable<BogoSorter> {
         private readonly Shuffler shuffler;
 
         internal BogoSorter(Shuffler shuffler) {
@@ -12,6 +12,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             while (!SortUtils.IsSorted(list, low, high, comparer)) {
                 this.shuffler(list, low, high);
             }

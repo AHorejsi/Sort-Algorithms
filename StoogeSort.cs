@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class StoogeSorter : ICompareSorter, IEquatable<StoogeSorter> {
+    public sealed class StoogeSorter : ICompareSorter, IEquatable<StoogeSorter> {
         private static StoogeSorter? instance = null;
 
         private StoogeSorter() {
@@ -19,6 +19,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             this.DoSort(list, low, high - 1, comparer);
         }
 

@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class PermutationSorter : ICompareSorter, IEquatable<PermutationSorter> {
+    public sealed class PermutationSorter : ICompareSorter, IEquatable<PermutationSorter> {
         private static PermutationSorter? instance = null;
 
         private PermutationSorter() {
@@ -19,6 +19,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             while (!SortUtils.IsSorted(list, low, high, comparer)) {
                 this.NextPermutation(list, low, high, comparer);
             }

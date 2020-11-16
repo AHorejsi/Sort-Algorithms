@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace Sorting {
-    public class GnomeSorter : ICompareSorter, IEquatable<GnomeSorter> {
+    public sealed class GnomeSorter : ICompareSorter, IEquatable<GnomeSorter> {
         private static GnomeSorter? instance = null;
 
         private GnomeSorter() {
@@ -19,6 +19,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             int index = low;
 
             while (index < high) {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class IntroSorter : ICompareSorter, IEquatable<IntroSorter> {
+    public sealed class IntroSorter : ICompareSorter, IEquatable<IntroSorter> {
         private readonly byte simpleSortLimit = 16;
         private readonly ICompareSorter simpleSorter = InsertionSortFactory.Make(SearchType.LINEAR);
         private readonly ICompareSorter depthLimitSorter = HeapSortFactory.Make(HeapType.BINARY);
@@ -24,6 +24,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             this.DoSort(list, low, high - 1, comparer, (int)(2 * Math.Log2(high - low)));
         }
 

@@ -11,6 +11,8 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
+            SortUtils.CheckRange(low, high);
+
             this.algorithm.Sort(list, low, high, comparer);
         }
 

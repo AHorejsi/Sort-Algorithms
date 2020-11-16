@@ -4,7 +4,7 @@ using System.Collections;
 namespace Sorting {
     internal delegate int Searcher(IList list, int low, int index, IComparer comparer);
 
-    public class InsertionSorter : ICompareSorter, IEquatable<InsertionSorter> {
+    public sealed class InsertionSorter : ICompareSorter, IEquatable<InsertionSorter> {
         private readonly Searcher searcher;
 
         internal InsertionSorter(Searcher searcher) {
@@ -12,13 +12,13 @@ namespace Sorting {
         }
 
         public void Sort(IList list, int low, int high, IComparer comparer) {
-            if (high - low > 1) {
-                for (int i = low + 1; i < high; ++i) {
-                    int sortedPosition = this.searcher(list, low, i, comparer);
+            SortUtils.CheckRange(low, high);
 
-                    for (int j = i; j > sortedPosition; --j) {
-                        SortUtils.Swap(list, j, j - 1);
-                    }
+            for (int i = low + 1; i < high; ++i) {
+                int sortedPosition = this.searcher(list, low, i, comparer);
+
+                for (int j = i; j > sortedPosition; --j) {
+                    SortUtils.Swap(list, j, j - 1);
                 }
             }
         }
@@ -48,11 +48,8 @@ namespace Sorting {
             else if (Searchers.Jump == this.searcher) {
                 searcherHashCode = 1578338564;
             }
-            else if (Searchers.Exponential == this.searcher) {
+            else { // Searchers.Exponential == this.searcher
                 searcherHashCode = -1639881796;
-            }
-            else { // Searchers.Fibonacci == this.searcher
-                searcherHashCode = -848830997;
             }
 
             return searcherHashCode;
@@ -134,61 +131,18 @@ namespace Sorting {
                     break;
                 }
             }
-
+            
             return prev;
-        }
-
-        public static int Fibonacci(IList list, int low, int high, IComparer comparer) {
-            int[] fibonacciData = Searchers.GetFibonacciData(high);
-            int offset = -1;
-
-            while (fibonacciData[2] > low + 1) {
-                int index = Math.Min(offset + fibonacciData[0], high - 1);
-                int comparison = comparer.Compare(list[index], list[high]);
-
-                if (comparison < 0) {
-                    fibonacciData[2] = fibonacciData[1];
-                    fibonacciData[1] = fibonacciData[0];
-                    fibonacciData[0] = fibonacciData[2] - fibonacciData[1];
-
-                    offset = index;
-                }
-                else if (comparison > 0) {
-                    fibonacciData[2] = fibonacciData[0];
-                    fibonacciData[1] = fibonacciData[1] - fibonacciData[0];
-                    fibonacciData[0] = fibonacciData[2] - fibonacciData[1];
-                }
-                else {
-                    return index;
-                }
-            }
-
-            return offset + 1;
-        }
-
-        private static int[] GetFibonacciData(int high) {
-            int fib0 = 0;
-            int fib1 = 1;
-            int fibN = fib0 + fib1;
-
-            while (fibN < high) {
-                fib0 = fib1;
-                fib1 = fibN;
-                fibN = fib0 + fib1;
-            }
-
-            return new int[] { fib0, fib1, fibN };
         }
     }
 
-    public enum SearchType { LINEAR, BINARY, FIBONACCI, EXPONENTIAL, JUMP }
+    public enum SearchType { LINEAR, BINARY, EXPONENTIAL, JUMP }
 
     public static class InsertionSortFactory {
         public static InsertionSorter Make(SearchType type) {
             Searcher searcher = type switch {
                 SearchType.LINEAR => Searchers.Linear,
                 SearchType.BINARY => Searchers.Binary,
-                SearchType.FIBONACCI => Searchers.Fibonacci,
                 SearchType.EXPONENTIAL => Searchers.Exponential,
                 SearchType.JUMP => Searchers.Jump,
                 _ => throw new InvalidOperationException(),
