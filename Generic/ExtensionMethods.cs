@@ -4,27 +4,27 @@ using System.Threading.Tasks;
 
 namespace Sorting.Generic {
     public static class ExtensionMethods {
-        public static void Sort<E, F>(this IList<E> list, ICompareSorter<F> sorter) where E : F, IComparable<F> {
+        public static void Sort<E>(this IList<E> list, ICompareSorter<E> sorter) {
             sorter.Sort(list);
         }
 
-        public static void Sort<E, F>(this IList<E> list, ICompareSorter<F> sorter, Comparison<F> comparison) where E : F {
+        public static void Sort<E>(this IList<E> list, ICompareSorter<E> sorter, Comparison<E> comparison) {
             sorter.Sort(list, comparison);
         }
 
-        public static void Sort<E, F>(this IList<E> list, ICompareSorter<F> sorter, IComparer<F> comparer) where E : F {
+        public static void Sort<E>(this IList<E> list, ICompareSorter<E> sorter, IComparer<E> comparer) {
             sorter.Sort(list, comparer);
         }
 
-        public static void Sort<E, F>(this IList<E> list, ICompareSorter<F> sorter, int low, int high) where E : F, IComparable<F> {
+        public static void Sort<E>(this IList<E> list, ICompareSorter<E> sorter, int low, int high) {
             sorter.Sort(list, low, high);
         }
 
-        public static void Sort<E, F>(this IList<E> list, ICompareSorter<F> sorter, Comparison<F> comparison, int low, int high) where E : F {
+        public static void Sort<E>(this IList<E> list, ICompareSorter<E> sorter, Comparison<E> comparison, int low, int high) {
             sorter.Sort(list, low, high, comparison);
         }
 
-        public static void Sort<E, F>(this IList<E> list, ICompareSorter<F> sorter, IComparer<F> comparer, int low, int high) where E : F {
+        public static void Sort<E>(this IList<E> list, ICompareSorter<E> sorter, IComparer<E> comparer, int low, int high) {
             sorter.Sort(list, low, high, comparer);
         }
 
@@ -44,27 +44,27 @@ namespace Sorting.Generic {
             sorter.Sort(list, low, high);
         }
 
-        public static void Sort<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter) where E : F, IComparable<F> {
+        public static void Sort<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter) {
             sorter.Sort(list);
         }
 
-        public static void Sort<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, Comparison<F> comparison) where E : F {
+        public static void Sort<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, Comparison<E> comparison) {
             sorter.Sort(list, comparison);
         }
 
-        public static void Sort<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, IComparer<F> comparer) where E : F {
+        public static void Sort<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, IComparer<E> comparer) {
             sorter.Sort(list, comparer);
         }
 
-        public static void Sort<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, LinkedListNode<E> first, LinkedListNode<E> last) where E : F, IComparable<F> {
+        public static void Sort<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, LinkedListNode<E> first, LinkedListNode<E> last) {
             sorter.Sort(first, last);
         }
 
-        public static void Sort<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, Comparison<F> comparison, LinkedListNode<E> first, LinkedListNode<E> last) where E : F {
+        public static void Sort<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, Comparison<E> comparison, LinkedListNode<E> first, LinkedListNode<E> last) {
             sorter.Sort(first, last, comparison);
         }
 
-        public static void Sort<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, IComparer<F> comparer, LinkedListNode<E> first, LinkedListNode<E> last) where E : F {
+        public static void Sort<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, IComparer<E> comparer, LinkedListNode<E> first, LinkedListNode<E> last) {
             sorter.Sort(first, last, comparer);
         }
 
@@ -84,27 +84,27 @@ namespace Sorting.Generic {
             sorter.Sort(first, last);
         }
 
-        public static async Task SortAsync<E, F>(this IList<E> list, ICompareSorter<F> sorter) where E : F, IComparable<F> {
+        public static async Task SortAsync<E>(this IList<E> list, ICompareSorter<E> sorter) {
             await sorter.SortAsync(list);
         }
 
-        public static async Task SortAsync<E, F>(this IList<E> list, ICompareSorter<F> sorter, Comparison<F> comparison) where E : F {
+        public static async Task SortAsync<E>(this IList<E> list, ICompareSorter<E> sorter, Comparison<E> comparison) {
             await sorter.SortAsync(list, comparison);
         }
 
-        public static async Task SortAsync<E, F>(this IList<E> list, ICompareSorter<F> sorter, IComparer<F> comparer) where E : F {
+        public static async Task SortAsync<E>(this IList<E> list, ICompareSorter<E> sorter, IComparer<E> comparer) {
             await sorter.SortAsync(list, comparer);
         }
 
-        public static async Task SortAsync<E, F>(this IList<E> list, ICompareSorter<F> sorter, int low, int high) where E : F, IComparable<F> {
+        public static async Task SortAsync<E>(this IList<E> list, ICompareSorter<E> sorter, int low, int high) {
             await sorter.SortAsync(list, low, high);
         }
 
-        public static async Task SortAsync<E, F>(this IList<E> list, ICompareSorter<F> sorter, Comparison<F> comparison, int low, int high) where E : F {
+        public static async Task SortAsync<E>(this IList<E> list, ICompareSorter<E> sorter, Comparison<E> comparison, int low, int high) {
             await sorter.SortAsync(list, low, high, comparison);
         }
 
-        public static async Task SortAsync<E, F>(this IList<E> list, ICompareSorter<F> sorter, IComparer<F> comparer, int low, int high) where E : F {
+        public static async Task SortAsync<E>(this IList<E> list, ICompareSorter<E> sorter, IComparer<E> comparer, int low, int high) {
             await sorter.SortAsync(list, low, high, comparer);
         }
 
@@ -124,27 +124,27 @@ namespace Sorting.Generic {
             await sorter.SortAsync(list, low, high);
         }
 
-        public static async Task SortAsync<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter) where E : F, IComparable<F> {
+        public static async Task SortAsync<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter) {
             await sorter.SortAsync(list);
         }
 
-        public static async Task SortAsync<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, Comparison<F> comparison) where E : F {
+        public static async Task SortAsync<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, Comparison<E> comparison) {
             await sorter.SortAsync(list, comparison);
         }
 
-        public static async Task SortAsync<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, IComparer<F> comparer) where E : F {
+        public static async Task SortAsync<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, IComparer<E> comparer) {
             await sorter.SortAsync(list, comparer);
         }
 
-        public static async Task SortAsync<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, LinkedListNode<E> first, LinkedListNode<E> last) where E : F, IComparable<F> {
+        public static async Task SortAsync<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, LinkedListNode<E> first, LinkedListNode<E> last) {
             await sorter.SortAsync(first, last);
         }
 
-        public static async Task SortAsync<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, Comparison<F> comparison, LinkedListNode<E> first, LinkedListNode<E> last) where E : F {
+        public static async Task SortAsync<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, Comparison<E> comparison, LinkedListNode<E> first, LinkedListNode<E> last) {
             await sorter.SortAsync(first, last, comparison);
         }
 
-        public static async Task SortAsync<E, F>(this LinkedList<E> list, ILinkedCompareSorter<F> sorter, IComparer<F> comparer, LinkedListNode<E> first, LinkedListNode<E> last) where E : F {
+        public static async Task SortAsync<E>(this LinkedList<E> list, ILinkedCompareSorter<E> sorter, IComparer<E> comparer, LinkedListNode<E> first, LinkedListNode<E> last) {
             await sorter.SortAsync(first, last, comparer);
         }
 

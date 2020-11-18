@@ -4,49 +4,49 @@ using System.Threading.Tasks;
 
 namespace Sorting.Generic {
     public interface ICompareSorter<T> {
-        public void Sort<R>(IList<R> list) where R : T, IComparable<T> {
+        void Sort(IList<T> list) {
             this.Sort(list, Comparer<T>.Default);
         }
 
-        public void Sort<R>(IList<R> list, Comparison<T> comparison) where R : T {
+        void Sort(IList<T> list, Comparison<T> comparison) {
             this.Sort(list, Comparer<T>.Create(comparison));
         }
 
-        public void Sort<R>(IList<R> list, IComparer<T> comparer) where R : T {
+        void Sort(IList<T> list, IComparer<T> comparer) {
             this.Sort(list, 0, list.Count, comparer);
         }
 
-        public void Sort<R>(IList<R> list, int low, int high) where R : T, IComparable<T> {
+        void Sort(IList<T> list, int low, int high) {
             this.Sort(list, low, high, Comparer<T>.Default);
         }
 
-        public void Sort<R>(IList<R> list, int low, int high, Comparison<T> comparison) where R : T {
+        void Sort(IList<T> list, int low, int high, Comparison<T> comparison) {
             this.Sort(list, low, high, Comparer<T>.Create(comparison));
         }
 
-        public void Sort<R>(IList<R> list, int low, int high, IComparer<T> comparer) where R : T;
+        void Sort(IList<T> list, int low, int high, IComparer<T> comparer);
 
-        public async Task SortAsync<R>(IList<R> list) where R : T, IComparable<T> {
+        async Task SortAsync(IList<T> list) {
             await Task.Run(() => { this.Sort(list); });
         }
 
-        public async Task SortAsync<R>(IList<R> list, Comparison<T> comparison) where R : T {
+        async Task SortAsync(IList<T> list, Comparison<T> comparison) {
             await Task.Run(() => { this.Sort(list, comparison); });
         }
 
-        public async Task SortAsync<R>(IList<R> list, IComparer<T> comparer) where R : T {
+        async Task SortAsync(IList<T> list, IComparer<T> comparer) {
             await Task.Run(() => { this.Sort(list, comparer); });
         }
 
-        public async Task SortAsync<R>(IList<R> list, int low, int high) where R : T, IComparable<T> {
+        async Task SortAsync(IList<T> list, int low, int high) {
             await Task.Run(() => { this.Sort(list, low, high); });
         }
 
-        public async Task SortAsync<R>(IList<R> list, int low, int high, Comparison<T> comparison) where R : T {
+        async Task SortAsync(IList<T> list, int low, int high, Comparison<T> comparison) {
             await Task.Run(() => { this.Sort(list, low, high, comparison); });
         }
 
-        public async Task SortAsync<R>(IList<R> list, int low, int high, IComparer<T> comparer) where R : T {
+        async Task SortAsync(IList<T> list, int low, int high, IComparer<T> comparer) {
             await Task.Run(() => { this.Sort(list, low, high, comparer); });
         }
     }
