@@ -4,39 +4,6 @@ using System.Collections.Immutable;
 
 namespace Sorting {
     internal static class SortUtils {
-        private static readonly ImmutableArray<Type> integerTypeSet;
-        private static readonly ImmutableArray<Type> floatTypeSet;
-
-        static SortUtils() {
-            SortUtils.integerTypeSet = ImmutableArray.Create(
-                typeof(byte),
-                typeof(sbyte),
-                typeof(short),
-                typeof(ushort),
-                typeof(int),
-                typeof(uint),
-                typeof(long),
-                typeof(ulong),
-                typeof(byte?),
-                typeof(sbyte?),
-                typeof(short?),
-                typeof(ushort?),
-                typeof(int?),
-                typeof(uint?),
-                typeof(long?),
-                typeof(ulong?)
-            );
-
-            SortUtils.floatTypeSet = ImmutableArray.Create(
-                typeof(float),
-                typeof(double),
-                typeof(decimal),
-                typeof(float?),
-                typeof(double?),
-                typeof(decimal?)
-            );
-        }
-
         public static void Swap<T>(IList<T> list, int i, int j) {
             T temp = list[i];
             list[i] = list[j];
@@ -79,18 +46,6 @@ namespace Sorting {
             }
 
             return true;
-        }
-
-        public static void CheckIfIntegerType<T>() {
-            if (!SortUtils.integerTypeSet.Contains(typeof(T))) {
-                throw new InvalidOperationException("Type must be an integer type");
-            }
-        }
-
-        public static void CheckIfFloatType<T>() {
-            if (!SortUtils.floatTypeSet.Contains(typeof(T))) {
-                throw new InvalidOperationException("Type must be a floating point type");
-            }
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 namespace Sorting {
     public sealed class CountingSorter<N> : IIntegerSorter<N> {
         public CountingSorter() {
-            SortUtils.CheckIfIntegerType<N>();
         }
 
         public void Sort(IList<N> list, int low, int high) {
