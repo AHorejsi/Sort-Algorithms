@@ -1,30 +1,17 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections.Generic;
 
 namespace Sorting {
-    public sealed class StoogeSorter : ICompareSorter, IEquatable<StoogeSorter> {
-        private static StoogeSorter? instance = null;
-
-        private StoogeSorter() {
+    public sealed class StoogeSorter<N> : ICompareSorter<N> {
+        public StoogeSorter() {
         }
 
-        public static StoogeSorter Singleton {
-            get {
-                if (StoogeSorter.instance is null) {
-                    StoogeSorter.instance = new StoogeSorter();
-                }
-
-                return StoogeSorter.instance;
-            }
-        }
-
-        public void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             SortUtils.CheckRange(low, high);
 
             this.DoSort(list, low, high - 1, comparer);
         }
 
-        private void DoSort(IList list, int low, int high, IComparer comparer) {
+        private void DoSort(IList<N> list, int low, int high, IComparer<N> comparer) {
             if (comparer.Compare(list[high], list[low]) < 0) {
                 SortUtils.Swap(list, low, high);
             }
@@ -38,20 +25,6 @@ namespace Sorting {
                 this.DoSort(list, low + third, high, comparer);
                 this.DoSort(list, low, high - third, comparer);
             }
-        }
-
-        public override bool Equals(object? obj) {
-            return this.Equals(obj as StoogeSorter);
-        }
-
-        public bool Equals(StoogeSorter? sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            Type type = base.GetType();
-
-            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

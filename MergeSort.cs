@@ -1,90 +1,14 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public class MergeSorter : ICompareSorter, IEquatable<MergeSorter> {
-        private readonly MergeSortAlgorithm algorithm;
-
-        internal MergeSorter(MergeSortAlgorithm algorithm) {
-            this.algorithm = algorithm;
-        }
-
-        public void Sort(IList list, int low, int high, IComparer comparer) {
-            SortUtils.CheckRange(low, high);
-
-            this.algorithm.Sort(list, low, high, comparer);
-        }
-
-        public override bool Equals(object? obj) {
-            return this.Equals(obj as MergeSorter);
-        }
-
-        public bool Equals(MergeSorter? sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.algorithm.Equals(sorter.algorithm);
-            }
-        }
-
-        public override int GetHashCode() {
-            return this.algorithm.GetHashCode();
-        }
-    }
-
-    public enum MergeType { OUT_OF_PLACE, IN_PLACE }
-    public enum MergeSortType { RECURSIVE, ITERATIVE, ASYNC_RECURSIVE }
-
-    public class MergeSortBuilder {
-        private MergeType mergeType;
-        private MergeSortType algorithmType;
-        
-        public MergeSortBuilder WithMerge(MergeType mergeType) {
-            this.mergeType = mergeType;
-
-            return this;
-        }
-
-        public MergeSortBuilder WithAlgorithm(MergeSortType algorithmType) {
-            this.algorithmType = algorithmType;
-
-            return this;
-        }
-
-        public MergeSorter Build() {
-            MergeSortAlgorithm algorithm = this.MakeAlgorithm();
-
-            return new MergeSorter(algorithm);
-        }
-
-        private MergeSortAlgorithm MakeAlgorithm() {
-            Merger merger = this.MakeMerger();
-
-            return this.algorithmType switch {
-                MergeSortType.RECURSIVE => new RecursiveMergeSortAlgorithm(merger),
-                MergeSortType.ASYNC_RECURSIVE => new AsyncRecursiveMergeSortAlgorithm(merger),
-                MergeSortType.ITERATIVE => new IterativeMergeSortAlgorithm(merger),
-                _ => throw new InvalidOperationException()
-            };
-        }
-
-        private Merger MakeMerger() {
-            return this.mergeType switch {
-                MergeType.OUT_OF_PLACE => Mergers.OutOfPlaceMerge,
-                MergeType.IN_PLACE => Mergers.InPlaceMerge,
-                _ => throw new InvalidOperationException()
-            };
-        }
-    }
-
-    public delegate void Merger(IList list, int low, int mid, int high, IComparer comparer);
+    internal delegate void Merger<N>(IList<N> list, int low, int mid, int high, IComparer<N> comparer);
 
     internal static class Mergers {
-        internal static void OutOfPlaceMerge(IList list, int low, int mid, int high, IComparer comparer) {
-            ArrayList leftList = Mergers.MakeSublist(list, low, mid);
-            ArrayList rightList = Mergers.MakeSublist(list, mid, high);
+        internal static void OutOfPlaceMerge<N>(IList<N> list, int low, int mid, int high, IComparer<N> comparer) {
+            List<N> leftList = Mergers.MakeSublist(list, low, mid);
+            List<N> rightList = Mergers.MakeSublist(list, mid, high);
 
             int leftIndex = 0;
             int rightIndex = 0;
@@ -120,8 +44,8 @@ namespace Sorting {
             }
         }
 
-        private static ArrayList MakeSublist(IList list, int low, int high) {
-            ArrayList sublist = new ArrayList(high - low);
+        private static List<N> MakeSublist<N>(IList<N> list, int low, int high) {
+            List<N> sublist = new List<N>(high - low);
 
             for (int index = low; index < high; ++index) {
                 sublist.Add(list[index]);
@@ -130,7 +54,7 @@ namespace Sorting {
             return sublist;
         }
 
-        internal static void InPlaceMerge(IList list, int low, int mid, int high, IComparer comparer) {
+        internal static void InPlaceMerge<N>(IList<N> list, int low, int mid, int high, IComparer<N> comparer) {
             int start = mid;
 
             while (low < mid && start < high) {
@@ -138,7 +62,7 @@ namespace Sorting {
                     ++low;
                 }
                 else {
-                    object? value = list[start];
+                    N value = list[start];
                     int index = start;
 
                     while (index != low) {
@@ -156,46 +80,29 @@ namespace Sorting {
         }
     }
 
-    internal abstract class MergeSortAlgorithm : IEquatable<MergeSortAlgorithm> {
-        protected Merger merger;
+    public abstract class MergeSorter<N> : ICompareSorter<N> {
+        internal Merger<N> merger;
 
-        internal MergeSortAlgorithm(Merger merger) {
+        internal MergeSorter(Merger<N> merger) {
             this.merger = merger;
         }
 
-        internal abstract void Sort(IList list, int low, int high, IComparer comparer);
+        public abstract void Sort(IList<N> list, int low, int high, IComparer<N> comparer);
 
-        protected void SwapAdjacent(IList list, int index, IComparer comparer) {
+        protected void SwapAdjacent(IList<N> list, int index, IComparer<N> comparer) {
             int nextIndex = index + 1;
 
             if (comparer.Compare(list[index], list[nextIndex]) > 0) {
                 SortUtils.Swap(list, index, nextIndex);
             }
         }
-
-        public bool Equals(MergeSortAlgorithm? algorithm) {
-            return this.merger == algorithm!.merger;
-        }
-
-        public override int GetHashCode() {
-            int mergerHashCode;
-
-            if (this.merger == Mergers.OutOfPlaceMerge) {
-                mergerHashCode = 1528339773;
-            }
-            else { // this.merger == Mergers.InPlaceMerge
-                mergerHashCode = 305729187;
-            }
-
-            return this.GetType().GetHashCode() + mergerHashCode;
-        }
     }
 
-    internal class RecursiveMergeSortAlgorithm : MergeSortAlgorithm {
-        internal RecursiveMergeSortAlgorithm(Merger merger) : base(merger) {
+    public sealed class RecursiveMergeSorter<N> : MergeSorter<N> {
+        internal RecursiveMergeSorter(Merger<N> merger) : base(merger) {
         }
 
-        internal override void Sort(IList list, int low, int high, IComparer comparer) {
+        public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             int size = high - low;
 
             if (size > 1) {
@@ -214,11 +121,11 @@ namespace Sorting {
         }
     }
 
-    internal class AsyncRecursiveMergeSortAlgorithm : MergeSortAlgorithm {
-        internal AsyncRecursiveMergeSortAlgorithm(Merger merger) : base(merger) {
+    public sealed class AsyncRecursiveMergeSorter<N> : MergeSorter<N> {
+        internal AsyncRecursiveMergeSorter(Merger<N> merger) : base(merger) {
         }
 
-        internal override void Sort(IList list, int low, int high, IComparer comparer) {
+        public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             int size = high - low;
 
             if (size > 1) {
@@ -239,11 +146,11 @@ namespace Sorting {
         }
     }
 
-    internal class IterativeMergeSortAlgorithm : MergeSortAlgorithm {
-        internal IterativeMergeSortAlgorithm(Merger merger) : base(merger) { 
+    public sealed class IterativeMergeSorter<N> : MergeSorter<N> {
+        internal IterativeMergeSorter(Merger<N> merger) : base(merger) { 
         }
 
-        internal override void Sort(IList list, int low, int high, IComparer comparer) {
+        public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             int size = high - low;
             int end = high - 1;
 
@@ -255,6 +162,46 @@ namespace Sorting {
                     base.merger(list, leftStart, mid, rightEnd, comparer);
                 }
             }
+        }
+    }
+
+    public enum MergeType { OUT_OF_PLACE, IN_PLACE }
+    public enum MergeSortType { ITERATIVE, RECURSIVE, ASYNC_RECURSIVE }
+
+    public class MergeSortBuilder<N> {
+        private MergeType mergeType;
+        private MergeSortType algorithmType;
+
+        public MergeSortBuilder<N> WithMerge(MergeType mergeType) {
+            this.mergeType = mergeType;
+
+            return this;
+        }
+
+        public MergeSortBuilder<N> WithAlgorithm(MergeSortType algorithmType) {
+            this.algorithmType = algorithmType;
+
+            return this;
+        }
+
+        public MergeSorter<N> Build() {
+            Merger<N> merger = this.MakeMerger();
+
+            return this.algorithmType switch {
+                MergeSortType.RECURSIVE => new RecursiveMergeSorter<N>(merger),
+                MergeSortType.ASYNC_RECURSIVE => new AsyncRecursiveMergeSorter<N>(merger),
+                MergeSortType.ITERATIVE => new IterativeMergeSorter<N>(merger),
+                _ => throw new InvalidOperationException()
+            };
+        }
+
+        private Merger<N> MakeMerger() {
+            return this.mergeType switch
+            {
+                MergeType.OUT_OF_PLACE => Mergers.OutOfPlaceMerge,
+                MergeType.IN_PLACE => Mergers.InPlaceMerge,
+                _ => throw new InvalidOperationException()
+            };
         }
     }
 }

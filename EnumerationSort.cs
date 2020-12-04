@@ -1,32 +1,19 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sorting {
-    public sealed class EnumerationSorter : ICompareSorter, IEquatable<EnumerationSorter> {
-        private static EnumerationSorter? instance = null;
-
-        private EnumerationSorter() {
+    public sealed class EnumerationSorter<N> : ICompareSorter<N> {
+        public EnumerationSorter() {
         }
 
-        public static EnumerationSorter Singleton {
-            get {
-                if (EnumerationSorter.instance is null) {
-                    EnumerationSorter.instance = new EnumerationSorter();
-                }
-
-                return EnumerationSorter.instance;
-            }
-        }
-
-        public void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             SortUtils.CheckRange(low, high);
 
-            EnumPosition[] positionArray = new EnumPosition[high - low];
+            EnumPosition<N>[] positionArray = new EnumPosition<N>[high - low];
 
             Parallel.For(low, high, (index) => {
                 int sortedIndex = low;
-                object? obj = list[index];
+                N obj = list[index];
 
                 for (int currentIndex = low; currentIndex < high; ++currentIndex) {
                     if (index != currentIndex) {
@@ -38,38 +25,24 @@ namespace Sorting {
                     }
                 }
 
-                positionArray[index - low] = new EnumPosition(obj, sortedIndex);
+                positionArray[index - low] = new EnumPosition<N>(obj, sortedIndex);
             });
 
-            Parallel.ForEach(positionArray, (enumPosition) => {
+            Parallel.ForEach(positionArray, (EnumPosition<N> enumPosition) => {
                 list[enumPosition.SortedIndex] = enumPosition.Value;
             });
         }
-
-        public override bool Equals(object? obj) {
-            return this.Equals(obj as EnumerationSorter);
-        }
-
-        public bool Equals(EnumerationSorter? sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            Type type = base.GetType();
-
-            return type.GetHashCode() + type.Name.GetHashCode();
-        }
     }
 
-    internal class EnumPosition {
-        public object? Value {
+    internal class EnumPosition<N> {
+        public N Value {
             get;
         }
         public int SortedIndex {
             get;
         }
 
-        public EnumPosition(object? value, int sortedIndex) {
+        public EnumPosition(N value, int sortedIndex) {
             this.Value = value;
             this.SortedIndex = sortedIndex;
         }

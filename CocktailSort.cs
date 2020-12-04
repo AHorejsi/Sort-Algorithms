@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections.Generic;
 
 namespace Sorting {
-    public sealed class CocktailSorter : ICompareSorter, IEquatable<CocktailSorter> {
-        private static CocktailSorter? instance = null;
-
-        private CocktailSorter() {
+    public sealed class CocktailSorter<N> : ICompareSorter<N> {
+        public CocktailSorter() {
         }
 
-        public static CocktailSorter Singleton {
-            get {
-                if (CocktailSorter.instance is null) {
-                    CocktailSorter.instance = new CocktailSorter();
-                }
-
-                return CocktailSorter.instance;
-            }
-        }
-
-        public void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             SortUtils.CheckRange(low, high);
 
             bool swapped;
@@ -39,7 +26,7 @@ namespace Sorting {
             } while (swapped);
         }
 
-        private bool BubbleUp(IList list, int low, int high, IComparer comparer) {
+        private bool BubbleUp(IList<N> list, int low, int high, IComparer<N> comparer) {
             bool swapped = false;
 
             for (int i = low; i < high; ++i) {
@@ -54,7 +41,7 @@ namespace Sorting {
             return swapped;
         }
 
-        private bool BubbleDown(IList list, int low, int high, IComparer comparer) {
+        private bool BubbleDown(IList<N> list, int low, int high, IComparer<N> comparer) {
             bool swapped = false;
 
             for (int i = high - 1; i >= low; --i) {
@@ -67,20 +54,6 @@ namespace Sorting {
             }
 
             return swapped;
-        }
-
-        public override bool Equals(object? obj) {
-            return this.Equals(obj as CocktailSorter);
-        }
-
-        public bool Equals(CocktailSorter? sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            Type type = base.GetType();
-
-            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

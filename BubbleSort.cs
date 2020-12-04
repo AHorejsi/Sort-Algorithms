@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections.Generic;
 
 namespace Sorting {
-    public sealed class BubbleSorter : ICompareSorter, IEquatable<BubbleSorter> {
-        private static BubbleSorter? instance = null;
-
-        private BubbleSorter() {
+    public sealed class BubbleSorter<N> : ICompareSorter<N> {
+        public BubbleSorter() {
         }
 
-        public static BubbleSorter Singleton {
-            get {
-                if (BubbleSorter.instance is null) {
-                    BubbleSorter.instance = new BubbleSorter();
-                }
-
-                return BubbleSorter.instance;
-            }
-        }
-
-        public void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             SortUtils.CheckRange(low, high);
 
             for (int i = low + 1; i < high; ++i) {
@@ -40,20 +27,6 @@ namespace Sorting {
                     return;
                 }
             }
-        }
-
-        public override bool Equals(object? obj) {
-            return this.Equals(obj as BubbleSorter);
-        }
-
-        public bool Equals(BubbleSorter? sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            Type type = base.GetType();
-
-            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

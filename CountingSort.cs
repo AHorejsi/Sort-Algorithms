@@ -1,24 +1,13 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Sorting {
-    public sealed class CountingSorter : IIntegerSorter, IEquatable<CountingSorter> {
-        private static CountingSorter? instance = null;
-
-        private CountingSorter() {
+    public sealed class CountingSorter<N> : IIntegerSorter<N> {
+        public CountingSorter() {
+            SortUtils.CheckIfIntegerType<N>();
         }
 
-        public static CountingSorter Singleton {
-            get { 
-                if (CountingSorter.instance is null) {
-                    CountingSorter.instance = new CountingSorter();
-                }
-
-                return CountingSorter.instance;
-            }
-        }
-
-        public void Sort(IList list, int low, int high) {
+        public void Sort(IList<N> list, int low, int high) {
             SortUtils.CheckRange(low, high);
 
             int minimum = this.FindMinimum(list, low, high);
@@ -26,10 +15,10 @@ namespace Sorting {
             int range = maximum - minimum + 1;
 
             int[] counts = new int[range];
-            object?[] result = new object?[high - low];
+            N[] result = new N[high - low];
 
             for (int index = low; index < high; ++index) {
-                ++(counts[(int)list[index]! - minimum]);
+                ++(counts[Convert.ToInt32(list[index]) - minimum]);
             }
 
             for (int index = 1; index < range; ++index) {
@@ -37,7 +26,7 @@ namespace Sorting {
             }
 
             for (int index = high - 1; index >= low; --index) {
-                int indexOfCounts = (int)list[index]! - minimum;
+                int indexOfCounts = Convert.ToInt32(list[index]) - minimum;
 
                 result[counts[indexOfCounts] - 1] = list[index]!;
                 --(counts[indexOfCounts]);
@@ -46,25 +35,25 @@ namespace Sorting {
             this.Move(list, low, result);
         }
 
-        private int FindMinimum(IList list, int low, int high) {
-            int minimum = (int)list[low]!;
-            
+        private int FindMinimum(IList<N> list, int low, int high) {
+            int minimum = Convert.ToInt32(list[low]);
+
             for (int index = low + 1; index < high; ++index) {
-                int current = (int)list[index]!;
+                int current = Convert.ToInt32(list[index]);
 
                 if (minimum > current) {
                     minimum = current;
-                } 
+                }
             }
 
             return minimum;
         }
 
-        private int FindMaximum(IList list, int low, int high) {
-            int maximum = (int)list[low]!;
+        private int FindMaximum(IList<N> list, int low, int high) {
+            int maximum = Convert.ToInt32(list[low]);
 
             for (int index = low + 1; index < high; ++index) {
-                int current = (int)list[index]!;
+                int current = Convert.ToInt32(list[index]);
 
                 if (maximum < current) {
                     maximum = current;
@@ -74,27 +63,13 @@ namespace Sorting {
             return maximum;
         }
 
-        private void Move(IList list, int low, object?[] result) {
+        private void Move(IList<N> list, int low, N[] result) {
             int index = low;
 
-            foreach (object? val in result) {
+            foreach (N val in result) {
                 list[index] = val;
                 ++index;
             }
-        }
-
-        public override bool Equals(object? obj) {
-            return this.Equals(obj as CountingSorter);
-        }
-
-        public bool Equals(CountingSorter? sorter) {
-            return !(sorter is null);
-        }
-
-        public override int GetHashCode() {
-            Type type = base.GetType();
-
-            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

@@ -1,46 +1,26 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 
-// Consider different types of heaps
 namespace Sorting {
-    public delegate void Heapifier(IList list, int index, int size, IComparer comparer);
+    public abstract class HeapSorter<N> : ICompareSorter<N> {
+        public abstract void Sort(IList<N> list, int low, int high, IComparer<N> comparer);
+    }
 
-    public class HeapSorter : ICompareSorter, IEquatable<HeapSorter> {
-        private readonly Heapifier heapifier;
-
-        internal HeapSorter(Heapifier heapifier) {
-            this.heapifier = heapifier;
-        }
-
-        public void Sort(IList list, int low, int high, IComparer comparer) {
+    public sealed class BinaryHeapSorter<N> : HeapSorter<N> {
+        public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             for (int index = (list.Count / 2) - 1; index >= 0; --index) {
-                this.heapifier(list, index, list.Count, comparer);
+                this.Heapify(list, index, list.Count, comparer);
             }
 
             for (int index = list.Count - 1; index > 0; --index) {
                 SortUtils.Swap(list, 0, index);
-                this.heapifier(list, 0, index, comparer);
+                this.Heapify(list, 0, index, comparer);
             }
         }
 
-        public override bool Equals(object? obj) {
-            return this.Equals(obj as HeapSorter);
-        }
-
-        public bool Equals(HeapSorter? sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.heapifier == sorter.heapifier;
-            }
-        }
-    }
-
-    internal static class Heapifiers {
-        public static void Binary(IList list, int index, int size, IComparer comparer) {
+        private void Heapify(IList<N> list, int index, int size, IComparer<N> comparer) {
             while (true) {
-                int indexOfLargest = Heapifiers.GetIndexOfLargest(list, index, size, comparer);
+                int indexOfLargest = this.GetIndexOfLargest(list, index, size, comparer);
 
                 if (index != indexOfLargest) {
                     SortUtils.Swap(list, index, indexOfLargest);
@@ -52,19 +32,7 @@ namespace Sorting {
             }
         }
 
-        public static void Weak(IList list, int index, int size, IComparer comparer) {
-            throw new NotImplementedException();
-        }
-
-        public static void Fibonacci(IList list, int index, int size, IComparer comparer) {
-            throw new NotImplementedException();
-        }
-
-        public static void Leonardo(IList list, int index, int size, IComparer comparer) {
-            throw new NotImplementedException();
-        }
-
-        private static int GetIndexOfLargest(IList list, int index, int size, IComparer comparer) {
+        private int GetIndexOfLargest(IList<N> list, int index, int size, IComparer<N> comparer) {
             int indexOfLargest = index;
             int indexOfLeft = 2 * index + 1;
             int indexOfRight = 2 * index + 2;
@@ -81,19 +49,32 @@ namespace Sorting {
         }
     }
 
+    public sealed class WeakHeapSorter<N> : HeapSorter<N> {
+        public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
+            throw new NotImplementedException();
+        }
+    }
+
+    public sealed class FibonacciHeapSorter<N> : HeapSorter<N> {
+        public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
+            throw new NotImplementedException();
+        }
+    }
+
+    public sealed class LeonardoHeapSorter<N> : HeapSorter<N> {
+        public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
+            throw new NotImplementedException();
+        }
+    }
+
     public enum HeapType { BINARY, WEAK, FIBONACCI, LEONARDO }
 
-    public static class HeapSortFactory {
-        public static HeapSorter Make(HeapType type) {
-            Heapifier heapifier = type switch {
-                HeapType.BINARY => Heapifiers.Binary,
-                HeapType.WEAK => Heapifiers.Weak,
-                HeapType.FIBONACCI => Heapifiers.Fibonacci,
-                HeapType.LEONARDO => Heapifiers.Leonardo,
+    public static class HeapSortFactory<N> {
+        public static HeapSorter<N> Make(HeapType type) {
+            return type switch {
+                HeapType.BINARY => new BinaryHeapSorter<N>(),
                 _ => throw new InvalidOperationException()
             };
-
-            return new HeapSorter(heapifier);
         }
     }
 }

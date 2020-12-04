@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Sorting {
-    internal delegate int Searcher(IList list, int low, int index, IComparer comparer);
+    internal delegate int Searcher<N>(IList<N> list, int low, int index, IComparer<N> comparer);
 
-    public sealed class InsertionSorter : ICompareSorter, IEquatable<InsertionSorter> {
-        private readonly Searcher searcher;
+    public sealed class InsertionSorter<N> : ICompareSorter<N> {
+        private readonly Searcher<N> searcher;
 
-        internal InsertionSorter(Searcher searcher) {
+        internal InsertionSorter(Searcher<N> searcher) {
             this.searcher = searcher;
         }
 
-        public void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             SortUtils.CheckRange(low, high);
 
             for (int i = low + 1; i < high; ++i) {
@@ -22,42 +22,10 @@ namespace Sorting {
                 }
             }
         }
-
-        public override bool Equals(object? obj) {
-            return this.Equals(obj as InsertionSorter);
-        }
-
-        public bool Equals(InsertionSorter? sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.searcher == sorter.searcher;
-            }
-        }
-
-        public override int GetHashCode() {
-            int searcherHashCode;
-
-            if (Searchers.Linear == this.searcher) {
-                searcherHashCode = 843941155;
-            }
-            else if (Searchers.Binary == this.searcher) {
-                searcherHashCode = -1716325658;
-            }
-            else if (Searchers.Jump == this.searcher) {
-                searcherHashCode = 1578338564;
-            }
-            else { // Searchers.Exponential == this.searcher
-                searcherHashCode = -1639881796;
-            }
-
-            return searcherHashCode;
-        }
     }
 
     internal static class Searchers {
-        public static int Linear(IList list, int low, int high, IComparer comparer) {
+        public static int Linear<N>(IList<N> list, int low, int high, IComparer<N> comparer) {
             int index = low;
 
             while (index < high) {
@@ -71,11 +39,11 @@ namespace Sorting {
             return index;
         }
 
-        public static int Binary(IList list, int low, int high, IComparer comparer) {
+        public static int Binary<N>(IList<N> list, int low, int high, IComparer<N> comparer) {
             return Searchers.DoBinary(list, low, high, list[high], comparer);
         }
 
-        public static int Exponential(IList list, int low, int high, IComparer comparer) {
+        public static int Exponential<N>(IList<N> list, int low, int high, IComparer<N> comparer) {
             if (comparer.Compare(list[low], list[high]) == 0) {
                 return low;
             }
@@ -88,7 +56,7 @@ namespace Sorting {
             return Searchers.DoBinary(list, index / 2, Math.Min(index, high), list[high], comparer);
         }
 
-        private static int DoBinary(IList list, int low, int high, object? key, IComparer comparer) {
+        private static int DoBinary<N>(IList<N> list, int low, int high, N key, IComparer<N> comparer) {
             int left = low;
             int right = high - 1;
 
@@ -110,7 +78,7 @@ namespace Sorting {
             return left;
         }
 
-        public static int Jump(IList list, int low, int high, IComparer comparer) {
+        public static int Jump<N>(IList<N> list, int low, int high, IComparer<N> comparer) {
             int size = high - low;
             int step = (int)Math.Sqrt(size);
             int prev = 0;
@@ -131,16 +99,17 @@ namespace Sorting {
                     break;
                 }
             }
-            
+
             return prev;
         }
     }
 
     public enum SearchType { LINEAR, BINARY, EXPONENTIAL, JUMP }
 
-    public static class InsertionSortFactory {
-        public static InsertionSorter Make(SearchType type) {
-            Searcher searcher = type switch {
+    public static class InsertionSortFactory<N> {
+        public static InsertionSorter<N> Make(SearchType type) {
+            Searcher<N> searcher = type switch
+            {
                 SearchType.LINEAR => Searchers.Linear,
                 SearchType.BINARY => Searchers.Binary,
                 SearchType.EXPONENTIAL => Searchers.Exponential,
@@ -148,7 +117,7 @@ namespace Sorting {
                 _ => throw new InvalidOperationException(),
             };
 
-            return new InsertionSorter(searcher);
+            return new InsertionSorter<N>(searcher);
         }
     }
 }

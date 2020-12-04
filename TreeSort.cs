@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Sorting {
-    public sealed class TreeSorter : ICompareSorter, IEquatable<TreeSorter> {
-        private readonly ISortingTree tree;
+    public sealed class TreeSorter<N> : ICompareSorter<N> {
+        private readonly ISortingTree<N> tree;
 
-        internal TreeSorter(ISortingTree tree) {
+        internal TreeSorter(ISortingTree<N> tree) {
             this.tree = tree;
         }
 
-        public void Sort(IList list, int low, int high, IComparer comparer) {
+        public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
             SortUtils.CheckRange(low, high);
 
             for (int index = low; index < high; ++index) {
@@ -20,49 +19,32 @@ namespace Sorting {
             this.tree.Traverse(list, low);
             this.tree.Empty();
         }
-
-        public override bool Equals(object? obj) {
-            return this.Equals(obj as TreeSorter);
-        }
-
-        public bool Equals(TreeSorter? sorter) {
-            if (sorter is null) {
-                return false;
-            }
-            else {
-                return this.tree.GetType().Equals(sorter.tree.GetType());
-            }
-        }
-
-        public override int GetHashCode() {
-            return this.tree.GetType().GetHashCode();
-        }
     }
 
-    internal interface ISortingTree {
-        public void Insert(object? value, IComparer comparer);
+    internal interface ISortingTree<N> {
+        public void Insert(N value, IComparer<N> comparer);
 
-        public void Traverse(IList list, int low);
+        public void Traverse(IList<N> list, int low);
 
         public void Empty();
     }
 
-    internal class RedBlackSortingTree : ISortingTree {
+    internal class RedBlackSortingTree<N> : ISortingTree<N> {
         private enum ColorType { RED, BLACK }
 
         private class RbNode {
-            public LinkedList<object?> valueList;
+            public LinkedList<N> valueList;
             public ColorType color;
-            public RbNode parent = RedBlackSortingTree.Nil;
-            public RbNode left = RedBlackSortingTree.Nil;
-            public RbNode right = RedBlackSortingTree.Nil;
+            public RbNode parent = RedBlackSortingTree<N>.Nil;
+            public RbNode left = RedBlackSortingTree<N>.Nil;
+            public RbNode right = RedBlackSortingTree<N>.Nil;
 
             public RbNode(ColorType color) {
-                this.valueList = new LinkedList<object?>();
+                this.valueList = new LinkedList<N>();
                 this.color = color;
             }
 
-            public RbNode(ColorType color, object? value) : this(color) {
+            public RbNode(ColorType color, N value) : this(color) {
                 this.valueList.AddLast(value);
             }
         }
@@ -71,11 +53,11 @@ namespace Sorting {
         private static readonly RbNode Nil = new RbNode(ColorType.BLACK);
 
         public RedBlackSortingTree() {
-            this.root = RedBlackSortingTree.Nil;
+            this.root = RedBlackSortingTree<N>.Nil;
         }
 
-        public void Insert(object? value, IComparer comparer) {
-            if (this.root == RedBlackSortingTree.Nil) {
+        public void Insert(N value, IComparer<N> comparer) {
+            if (this.root == RedBlackSortingTree<N>.Nil) {
                 this.root = new RbNode(ColorType.BLACK, value);
             }
             else {
@@ -100,7 +82,7 @@ namespace Sorting {
             }
         }
 
-        private RbNode FindInsertionPoint(object? value, IComparer comparer) {
+        private RbNode FindInsertionPoint(N value, IComparer<N> comparer) {
             RbNode node = this.root;
             RbNode parent;
 
@@ -117,7 +99,7 @@ namespace Sorting {
                 else {
                     return node;
                 }
-            } while (node != RedBlackSortingTree.Nil);
+            } while (node != RedBlackSortingTree<N>.Nil);
 
             return parent;
         }
@@ -193,7 +175,7 @@ namespace Sorting {
                 pivot.parent = root.parent;
                 root.right = pivot.left;
 
-                if (pivot.left != RedBlackSortingTree.Nil) {
+                if (pivot.left != RedBlackSortingTree<N>.Nil) {
                     pivot.left.parent = root;
                 }
 
@@ -205,7 +187,7 @@ namespace Sorting {
                 pivot.parent = root.parent;
                 root.right = pivot.left;
 
-                if (pivot.left != RedBlackSortingTree.Nil) {
+                if (pivot.left != RedBlackSortingTree<N>.Nil) {
                     pivot.left.parent = root;
                 }
 
@@ -220,7 +202,7 @@ namespace Sorting {
                 pivot.parent = root.parent;
                 root.left = pivot.right;
 
-                if (pivot.right != RedBlackSortingTree.Nil) {
+                if (pivot.right != RedBlackSortingTree<N>.Nil) {
                     pivot.right.parent = root;
                 }
                 
@@ -232,7 +214,7 @@ namespace Sorting {
                 pivot.parent = root.parent;
                 root.left = pivot.right;
 
-                if (pivot.right != RedBlackSortingTree.Nil) {
+                if (pivot.right != RedBlackSortingTree<N>.Nil) {
                     pivot.right.parent = root;
                 }
                
@@ -241,15 +223,15 @@ namespace Sorting {
             }
         }
 
-        public void Traverse(IList list, int index) {
+        public void Traverse(IList<N> list, int index) {
             this.InorderTraverse(list, index, this.root);
         }
 
-        private int InorderTraverse(IList list, int currentIndex, RbNode node) {
-            if (node != RedBlackSortingTree.Nil) {
+        private int InorderTraverse(IList<N> list, int currentIndex, RbNode node) {
+            if (node != RedBlackSortingTree<N>.Nil) {
                 currentIndex = this.InorderTraverse(list, currentIndex, node.left);
 
-                foreach (object? val in node.valueList) {
+                foreach (N val in node.valueList) {
                     list[currentIndex] = val;
                     ++currentIndex;
                 }
@@ -261,16 +243,16 @@ namespace Sorting {
         }
 
         public void Empty() {
-            this.root = RedBlackSortingTree.Nil;
+            this.root = RedBlackSortingTree<N>.Nil;
         }
     }
 
-    public class AvlSortingTree : ISortingTree {
-        public void Insert(object? value, IComparer comparer) {
+    public class AvlSortingTree<N> : ISortingTree<N> {
+        public void Insert(N value, IComparer<N> comparer) {
             throw new NotImplementedException();
         }
 
-        public void Traverse(IList list, int index) {
+        public void Traverse(IList<N> list, int index) {
             throw new NotImplementedException();
         }
 
@@ -279,12 +261,12 @@ namespace Sorting {
         }
     }
 
-    public class SplaySortingTree : ISortingTree {
-        public void Insert(object? value, IComparer comparer) {
+    public class SplaySortingTree<N> : ISortingTree<N> {
+        public void Insert(N value, IComparer<N> comparer) {
             throw new NotImplementedException();
         }
 
-        public void Traverse(IList list, int index) {
+        public void Traverse(IList<N> list, int index) {
             throw new NotImplementedException();
         }
 
@@ -295,16 +277,16 @@ namespace Sorting {
 
     public enum TreeType { RED_BLACK, AVL, SPLAY }
 
-    public static class TreeSortFactory {
-        public static TreeSorter Make(TreeType type) {
-            ISortingTree sortingTree = type switch {
-                TreeType.RED_BLACK => new RedBlackSortingTree(),
-                TreeType.AVL => new AvlSortingTree(),
-                TreeType.SPLAY => new SplaySortingTree(),
+    public static class TreeSortFactory<N> {
+        public static TreeSorter<N> Make(TreeType type) {
+            ISortingTree<N> sortingTree = type switch {
+                TreeType.RED_BLACK => new RedBlackSortingTree<N>(),
+                TreeType.AVL => new AvlSortingTree<N>(),
+                TreeType.SPLAY => new SplaySortingTree<N>(),
                 _ => throw new InvalidOperationException(),
             };
 
-            return new TreeSorter(sortingTree);
+            return new TreeSorter<N>(sortingTree);
         }
     }
 }
