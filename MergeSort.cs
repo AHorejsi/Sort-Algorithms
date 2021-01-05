@@ -10,8 +10,8 @@ namespace Sorting {
             List<N> leftList = Mergers.MakeSublist(list, low, mid);
             List<N> rightList = Mergers.MakeSublist(list, mid, high);
 
-            int leftIndex = 0;
-            int rightIndex = 0;
+            var leftIndex = 0;
+            var rightIndex = 0;
             int listIndex = low;
 
             while (leftIndex < leftList.Count && rightIndex < rightList.Count) {
@@ -45,7 +45,7 @@ namespace Sorting {
         }
 
         private static List<N> MakeSublist<N>(IList<N> list, int low, int high) {
-            List<N> sublist = new List<N>(high - low);
+            var sublist = new List<N>(high - low);
 
             for (int index = low; index < high; ++index) {
                 sublist.Add(list[index]);
@@ -140,6 +140,9 @@ namespace Sorting {
 
                     Task.WaitAll(task1, task2);
 
+                    task1.Dispose();
+                    task2.Dispose();
+
                     base.merger(list, low, mid, high, comparer);
                 }
             }
@@ -154,7 +157,7 @@ namespace Sorting {
             int size = high - low;
             int end = high - 1;
 
-            for (int currentSize = 1; currentSize < size; currentSize *= 2) {
+            for (var currentSize = 1; currentSize < size; currentSize *= 2) {
                 for (int leftStart = low; leftStart < size; leftStart += currentSize * 2) {
                     int mid = Math.Min(leftStart + currentSize, end);
                     int rightEnd = Math.Min(leftStart + 2 * currentSize, size);

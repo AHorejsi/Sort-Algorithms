@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Sorting {
-    public sealed class GnomeSorter<N> : ICompareSorter<N> {
+    public sealed class GnomeSorter<N> : ICompareSorter<N>, IEquatable<GnomeSorter<N>> {
         public GnomeSorter() {
         }
 
         public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
-            SortUtils.CheckRange(low, high);
-
             int index = low;
 
             while (index < high) {
@@ -23,6 +22,20 @@ namespace Sorting {
                     --index;
                 }
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as GnomeSorter<N>);
+        }
+
+        public bool Equals(GnomeSorter<N>? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = base.GetType();
+
+            return HashCode.Combine(type, type.Name);
         }
     }
 }

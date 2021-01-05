@@ -2,30 +2,51 @@
 using System.Collections.Generic;
 
 namespace Sorting {
-    internal delegate void Shuffler<N>(IList<N> list, int low, int high, Random rand);
+    public enum ShuffleType { RANDOM_SHUFFLE, SWAP_TWO }
 
-    public sealed class BogoSorter<N> : ICompareSorter<N> {
-        private readonly Shuffler<N> shuffler;
+    public sealed class BogoSorter<N> : ICompareSorter<N>, IEquatable<BogoSorter<N>> {
+        private Shuffler<N> shuffler;
+        private ShuffleType shuffleType;
 
-        internal BogoSorter(Shuffler<N> shuffler) {
-            this.shuffler = shuffler;
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        public BogoSorter(ShuffleType shuffleType) {
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+            this.ShuffleType = shuffleType;
+        }
+
+        public ShuffleType ShuffleType {
+            get => this.shuffleType;
+            set {
+                this.shuffleType = value;
+                this.shuffler = value switch {
+                    ShuffleType.RANDOM_SHUFFLE => Shufflers.RandomShuffle,
+                    ShuffleType.SWAP_TWO => Shufflers.SwapTwo,
+                    _ => throw new InvalidOperationException()
+                };
+            }
         }
 
         public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
-            SortUtils.CheckRange(low, high);
-
-            Random rand = new Random();
+            var rand = new Random();
 
             while (!SortUtils.IsSorted(list, low, high, comparer)) {
                 this.shuffler(list, low, high, rand);
             }
         }
+
+        public override bool Equals(object? obj) => this.Equals(obj as BogoSorter<N>);
+
+        public bool Equals(BogoSorter<N>? sorter) => sorter is null || this.shuffleType == sorter.shuffleType;
+
+        public override int GetHashCode() => HashCode.Combine(this.shuffleType);
     }
+
+    internal delegate void Shuffler<N>(IList<N> list, int low, int high, Random rand);
 
     internal static class Shufflers {
         public static void RandomShuffle<N>(IList<N> list, int low, int high, Random rand) {
-            for (int index = low + 2; index < high; ++index) {
-                int randomIndex = rand.Next(low, index);
+            for (int index = low + 1; index < high - 1; ++index) {
+                int randomIndex = rand.Next(low, index + 1);
 
                 if (randomIndex != index) {
                     SortUtils.Swap(list, index, randomIndex);
@@ -40,21 +61,6 @@ namespace Sorting {
             if (randomIndex1 != randomIndex2) {
                 SortUtils.Swap(list, randomIndex1, randomIndex2);
             }
-        }
-    }
-
-    public enum ShufflerType { RANDOM_SHUFFLE, SWAP_TWO }
-
-    public static class BogoSortFactory {
-        public static BogoSorter<N> Make<N>(ShufflerType type) {
-            Shuffler<N> shuffler = type switch
-            {
-                ShufflerType.RANDOM_SHUFFLE => Shufflers.RandomShuffle,
-                ShufflerType.SWAP_TWO => Shufflers.SwapTwo,
-                _ => throw new InvalidOperationException()
-            };
-
-            return new BogoSorter<N>(shuffler);
         }
     }
 }

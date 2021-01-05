@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 
 namespace Sorting {
-    public sealed class CountingSorter<N> : IIntegerSorter<N> {
+    public sealed class CountingSorter<N> : IIntegerSorter<N>, IEquatable<CountingSorter<N>> {
         public CountingSorter() {
         }
 
         public void Sort(IList<N> list, int low, int high) {
-            SortUtils.CheckRange(low, high);
-
             int minimum = this.FindMinimum(list, low, high);
             int maximum = this.FindMaximum(list, low, high);
             int range = maximum - minimum + 1;
@@ -69,6 +67,20 @@ namespace Sorting {
                 list[index] = val;
                 ++index;
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as CountingSorter<N>);
+        }
+
+        public bool Equals(CountingSorter<N>? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = base.GetType();
+
+            return type.GetHashCode() + type.Name.GetHashCode();
         }
     }
 }

@@ -12,21 +12,15 @@ namespace Sorting {
     internal static class PivotSelectors {
         private static readonly Random rand = new Random();
 
-        internal static int First<N>(IList<N> list, int low, int high, IComparer<N> comparer) {
-            return low;
-        }
+#pragma warning disable IDE0060 // Remove unused parameter
+        internal static int First<N>(IList<N> list, int low, int high, IComparer<N> comparer) => low;
 
-        internal static int Middle<N>(IList<N> list, int low, int high, IComparer<N> comparer) {
-            return low + (high + 1 - low) / 2;
-        }
+        internal static int Middle<N>(IList<N> list, int low, int high, IComparer<N> comparer) => low + (high + 1 - low) / 2;
 
-        internal static int Last<N>(IList<N> list, int low, int high, IComparer<N> comparer) {
-            return high;
-        }
+        internal static int Last<N>(IList<N> list, int low, int high, IComparer<N> comparer) => high;
 
-        internal static int Random<N>(IList<N> list, int low, int high, IComparer<N> comparer) {
-            return PivotSelectors.rand.Next(low, high + 1);
-        }
+        internal static int Random<N>(IList<N> list, int low, int high, IComparer<N> comparer) => PivotSelectors.rand.Next(low, high + 1);
+#pragma warning restore IDE0060 // Remove unused parameter
 
         internal static int MedianOfThree<N>(IList<N> list, int low, int high, IComparer<N> comparer) {
             int mid = low + (high + 1 - low) / 2;
@@ -120,8 +114,8 @@ namespace Sorting {
             int pivotIndex = base.pivotSelector(list, low, high, comparer);
             SortUtils.Swap(list, pivotIndex, mid);
 
-            List<N> lesser = new List<N>(list.Count);
-            List<N> greater = new List<N>(list.Count);
+            var lesser = new List<N>(list.Count);
+            var greater = new List<N>(list.Count);
             N pivot = list[mid];
 
             for (int index = low; index <= high; ++index) {
@@ -218,17 +212,11 @@ namespace Sorting {
     internal delegate int PartitionPointDistance(int partitionPoint);
 
     internal static class PartitionPointDistances {
-        internal static int At(int partitionPoint) {
-            return partitionPoint;
-        }
+        internal static int At(int partitionPoint) => partitionPoint;
 
-        internal static int RightOne(int partitionPoint) {
-            return partitionPoint + 1;
-        }
+        internal static int RightOne(int partitionPoint) => partitionPoint + 1;
 
-        internal static int LeftOne(int partitionPoint) {
-            return partitionPoint - 1;
-        }
+        internal static int LeftOne(int partitionPoint) => partitionPoint - 1;
     }
 
     public abstract class QuickSorter<N> {
@@ -251,7 +239,6 @@ namespace Sorting {
         }
 
         public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
-            SortUtils.CheckRange(low, high);
             this.DoSort(list, low, high - 1, comparer);
         }
 
@@ -277,7 +264,6 @@ namespace Sorting {
         }
 
         public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
-            SortUtils.CheckRange(low, high);
             this.DoSort(list, low, high - 1, comparer);
         }
 
@@ -298,6 +284,9 @@ namespace Sorting {
                 }
 
                 Task.WaitAll(task1, task2);
+
+                task1.Dispose();
+                task2.Dispose();
             }
         }
     }
@@ -308,12 +297,10 @@ namespace Sorting {
         }
 
         public override void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
-            SortUtils.CheckRange(low, high);
-
             if (high - low > 1) {
                 --high;
 
-                Stack<int> recursionStack = new Stack<int>(high - low);
+                var recursionStack = new Stack<int>(high - low);
                 recursionStack.Push(low);
                 recursionStack.Push(high);
 
@@ -348,7 +335,7 @@ namespace Sorting {
         }
     }
 
-    public class QuickSortBuilder<N> {
+    public sealed class QuickSortBuilder<N> {
         private PivotSelectorType pivotSelectorType;
         private PartitionSchemeType partitionSchemeType;
         private QuickSortType algorithmType;
@@ -373,12 +360,12 @@ namespace Sorting {
 
         public QuickSorter<N> Build() {
             PartitionScheme<N> partitionScheme = this.MakePartitionScheme();
-            Tuple<PartitionPointDistance, PartitionPointDistance> partitionPointDistances = this.MakePartitionPointDistances();
+            (PartitionPointDistance left, PartitionPointDistance right) = this.MakePartitionPointDistances();
 
             return this.algorithmType switch {
-                QuickSortType.RECURSIVE => new RecursiveQuickSorter<N>(partitionScheme, partitionPointDistances.Item1, partitionPointDistances.Item2),
-                QuickSortType.ASYNC_RECURSIVE => new AsyncRecursiveQuickSorter<N>(partitionScheme, partitionPointDistances.Item1, partitionPointDistances.Item2),
-                QuickSortType.ITERATIVE => new IterativeQuickSorter<N>(partitionScheme, partitionPointDistances.Item1, partitionPointDistances.Item2),
+                QuickSortType.RECURSIVE => new RecursiveQuickSorter<N>(partitionScheme, left, right),
+                QuickSortType.ASYNC_RECURSIVE => new AsyncRecursiveQuickSorter<N>(partitionScheme, left, right),
+                QuickSortType.ITERATIVE => new IterativeQuickSorter<N>(partitionScheme, left, right),
                 _ => throw new InvalidOperationException()
             };
         }
@@ -406,12 +393,12 @@ namespace Sorting {
             };
         }
 
-        private Tuple<PartitionPointDistance, PartitionPointDistance> MakePartitionPointDistances() {
+        private (PartitionPointDistance, PartitionPointDistance) MakePartitionPointDistances() {
             return this.partitionSchemeType switch {
-                PartitionSchemeType.LOMUTO => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.LeftOne, PartitionPointDistances.RightOne),
-                PartitionSchemeType.HOARE => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.At, PartitionPointDistances.RightOne),
-                PartitionSchemeType.STABLE => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.LeftOne, PartitionPointDistances.RightOne),
-                PartitionSchemeType.THREE_WAY => new Tuple<PartitionPointDistance, PartitionPointDistance>(PartitionPointDistances.At, PartitionPointDistances.At),
+                PartitionSchemeType.LOMUTO => (PartitionPointDistances.LeftOne, PartitionPointDistances.RightOne),
+                PartitionSchemeType.HOARE => (PartitionPointDistances.At, PartitionPointDistances.RightOne),
+                PartitionSchemeType.STABLE => (PartitionPointDistances.LeftOne, PartitionPointDistances.RightOne),
+                PartitionSchemeType.THREE_WAY => (PartitionPointDistances.At, PartitionPointDistances.At),
                 _ => throw new InvalidOperationException()
             };
         }

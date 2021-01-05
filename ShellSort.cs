@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Sorting {
-    public sealed class ShellSorter<N> : ICompareSorter<N> {
+    public sealed class ShellSorter<N> : ICompareSorter<N>, IEquatable<ShellSorter<N>> {
         public ShellSorter() {
         }
 
         public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
-            SortUtils.CheckRange(low, high);
-
             int size = high - low;
 
             for (int gap = size / 2; gap > 0; gap /= 2) {
@@ -22,6 +21,20 @@ namespace Sorting {
                     list[j] = temp;
                 }
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as ShellSorter<N>);
+        }
+
+        public bool Equals(ShellSorter<N>? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = base.GetType();
+
+            return HashCode.Combine(type, type.Name);
         }
     }
 }

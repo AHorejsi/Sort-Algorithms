@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Sorting {
-    public sealed class BubbleSorter<N> : ICompareSorter<N> {
+    public sealed class BubbleSorter<N> : ICompareSorter<N>, IEquatable<BubbleSorter<N>> {
         public BubbleSorter() {
         }
 
         public void Sort(IList<N> list, int low, int high, IComparer<N> comparer) {
-            SortUtils.CheckRange(low, high);
-
             for (int i = low + 1; i < high; ++i) {
-                bool swapped = false;
+                var swapped = false;
                 int j = low;
                 int k = j + 1;
 
@@ -27,6 +26,20 @@ namespace Sorting {
                     return;
                 }
             }
+        }
+
+        public override bool Equals(object? obj) {
+            return this.Equals(obj as BubbleSorter<N>);
+        }
+
+        public bool Equals(BubbleSorter<N>? sorter) {
+            return !(sorter is null);
+        }
+
+        public override int GetHashCode() {
+            Type type = base.GetType();
+
+            return HashCode.Combine(type, type.Name);
         }
     }
 }
